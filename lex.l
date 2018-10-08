@@ -1,8 +1,7 @@
-/*----- Sección de Declaraciones --------------*/
+/*----- Seccion de Declaraciones --------------*/
 %{
 #include <stdio.h>
-int nc, np, nl, llave_abierta, llave_cerrada, comentarios, llamadas_funcion;
-void escribir_datos (int dato1, int dato2, int dato3, int dato4, int dato5);
+int yylval;
 %}
 
 %option yylineno
@@ -10,17 +9,8 @@ void escribir_datos (int dato1, int dato2, int dato3, int dato4, int dato5);
 
 /*----- Seccion de Reglas ----------------*/
 %%
-([a-zA-Z]|[0-9]|_)+"."([a-zA-Z]|[0-9]|_|" ")*"("([a-zA-Z]|[0-9]|_|"*"|" "|",")*");"      { printf("LLAMADA_FUNCION "); llamadas_funcion++;}
-([a-zA-Z]|[0-9]|_|" ")+(" ")*"("([a-zA-Z]|[0-9]|_|"*"|" "|",")*");"      { printf("LLAMADA_FUNCION "); llamadas_funcion++;}
-([a-zA-Z]|[0-9]|_|" ")+(" ")*"main"(" ")*"("([a-zA-Z]|[0-9]|_|"*"|" "|",")*")"       { printf("PROGRAMA_PRINCIPAL ");}
-([a-zA-Z]|[0-9]|_|" ")+(" ")*"("([a-zA-Z]|[0-9]|_|"*"|" "|",")*")"       { printf("CABECERA_FUNCION ");}
-"("([a-zA-Z]|[0-9]|_|"*"|" "|",")*")"                                { printf("PARAMETROS_FUNCION ");}
-"("([a-zA-Z]|[0-9]|_|" "|"%")*(" "|","|"."|"<"|">"|"="|"%"|"!")*([a-zA-Z]|[0-9]|_|" "|","|".")*")"                    { printf("COMPARACION ");}
-([a-zA-Z]|[0-9]|_)*(" ")*"="(" ")*([a-zA-Z]|[0-9]|_)+(" ")*("+"|"-"|"*"|"/"|"^"|"%")*(" ")*([a-zA-Z]|[0-9]|_)+                    { printf("OPERACION");}
-"#include"(" ")*("<"|\")+([a-zA-Z]|[0-9]|_|"*"|" ")*(">"|\")+   {  printf("INCLUYE_LIBRERIA");}
 
-
-"*" {  printf("BINARY_OP");
+"*" {  printf("BINARY_OP");}
 "/" {  printf("BINARY_OP");}
 "==" {  printf("BINARY_OP");}
 "!=" {  printf("BINARY_OP");}
@@ -67,7 +57,7 @@ void escribir_datos (int dato1, int dato2, int dato3, int dato4, int dato5);
 .                           { printf("(Line ) %d No reconocido'%s'",yylineno,yytext); }
 
 %%
-/*----- Sección de Procedimientos --------*/
+/*----- Seccion de Procedimientos --------*/
 int main (int argc, char** argv) {
 
 	if (argc <= 1) {
@@ -75,20 +65,11 @@ int main (int argc, char** argv) {
 	}else {
 		yyin = fopen(argv[1], "r");
 		int val;
-		nl = llave_abierta = llave_cerrada = comentarios = llamadas_funcion = 0;
 		val = yylex();
 		while (val != 0) {
 			printf("%d ", val);
 			val = yylex();
-		}
-		escribir_datos(nl,llave_abierta, llave_cerrada, comentarios, llamadas_funcion);
+      }
 	}
 	exit(1);
 }
-void escribir_datos (int dato1, int dato2, int dato3, int dato4, int dato5) {
-printf("Número de líneas de código=%d\n", dato1);
-printf("Número de comentarios en su código=%d\n", dato4);
-printf("Número de llamadas a función en su código=%d\n", dato5);
-if(dato2!= dato3) printf("Existen bloques sin cerrar, compruebe las llaves de su código\n");
-}
-
