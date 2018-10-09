@@ -10,22 +10,24 @@ int yylval;
 /*----- Seccion de Reglas ----------------*/
 %%
 
-"*" {  printf("BINARY_OP");}
-"/" {  printf("BINARY_OP");}
-"==" {  printf("BINARY_OP");}
-"!=" {  printf("BINARY_OP");}
-"<=" {  printf("BINARY_OP");}
-">=" {  printf("BINARY_OP");}
-"<"  {  printf("BINARY_OP");}
-"&&" {  printf("BINARY_OP");}
-"||" {  printf("BINARY_OP");}
-"^"  {  printf("BINARY_OP");}
-"**" {  printf("BINARY_OP");}
-"++" {  printf("UNI_OP");}
-"--" {  printf("UNI_OP");}
-"!" {  printf("UNI_OP");}
-"+" {  printf("SIGNO_BIN_OP");}
-"-" {  printf("SIGNO_BIN_OP");}
+"*" {  printf("BINARY_OP ");}
+"/" {  printf("BINARY_OP ");}
+"==" {  printf("BINARY_OP ");}
+"!=" {  printf("BINARY_OP ");}
+"<=" {  printf("BINARY_OP ");}
+">=" {  printf("BINARY_OP ");}
+"<"  {  printf("BINARY_OP ");}
+">"  {  printf("BINARY_OP ");}
+"&&" {  printf("BINARY_OP ");}
+"||" {  printf("BINARY_OP ");}
+"^"  {  printf("BINARY_OP ");}
+"**" {  printf("BINARY_OP ");}
+"++" {  printf("UNI_OP ");}
+"--" {  printf("UNI_OP ");}
+"!" {  printf("UNI_OP ");}
+"+" {  printf("SIGNO_BIN_OP ");}
+"-" {  printf("SIGNO_BIN_OP ");}
+"=" {  printf("ASIGNACION ");}
 "principal"     {  printf("MAIN ");}
 "si"     {  printf("SI ");}
 "mientras"     {  printf("MIENTRAS ");}
@@ -34,8 +36,8 @@ int yylval;
 "entrada"        {  printf("LEER ");}
 "hacer"      {  printf("HACER ");}
 "hasta"  {  printf("HASTA ");}
-"verdadero"         {  printf("BOOLEANOS");}
-"falso"         {  printf("BOOLEANOS");}      
+"verdadero"         {  printf("BOOLEANOS ");}
+"falso"         {  printf("BOOLEANOS ");}      
 ";"    {  printf("PUN_COMA ");}
 ","    {  printf("SEPARADOR ");}
 "("    {  printf("PAR_IZQ ");}
@@ -46,7 +48,7 @@ int yylval;
 "]"    {  printf("COR_DER ");}
 [0-9]*                   { printf("CONST_INT ");}
 [0-9]*\.[0-9]+           { printf("CONST_FLOAT ");}
-"'"[^"'"]"'"             { printf("CONST_CHAR ");}
+\'[^\']+\'             { printf("CONST_CHAR ");}
 \"[^\"]*\"               { printf("CONST_STRING ");}
 "entero"       {  printf("TIPO ");}
 "booleano"     {  printf("TIPO ");}
@@ -54,6 +56,10 @@ int yylval;
 "real"      {  printf("TIPO ");}
 "{"    {  printf("INICIO_BLOQUE ");}
 "}"    {  printf("FIN_BLOQUE ");}
+[a-zA-Z]([a-zA-Z]|[0-9]|_)*  { printf("IDENTIFICADOR ");}
+\n       { printf("\n");}
+\t		  { printf("\t ");}
+" "	       { printf("");}
 .                           { printf("(Line ) %d No reconocido'%s'",yylineno,yytext); }
 
 %%
