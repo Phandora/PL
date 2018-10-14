@@ -1,0 +1,4 @@
+#Ignore .exe and .yy.c files
+
+*.exe
+*.yy.c
