@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include "tab.h"
 %}
 
 %option yylineno
@@ -14,55 +15,55 @@ otros       .
 
 %%
 
-"*"             printf("BINARY_OP ");
-"/"             printf("BINARY_OP ");
-"=="            printf("BINARY_OP ");
-"!="            printf("BINARY_OP ");
-"<="            printf("BINARY_OP ");
-">="            printf("BINARY_OP ");
-"<"             printf("BINARY_OP ");
-">"             printf("BINARY_OP ");
-"&&"            printf("BINARY_OP ");
-"||"            printf("BINARY_OP ");
-"^"             printf("BINARY_OP ");
-"**"            printf("BINARY_OP ");
-"++"            printf("UNI_OP ");
-"--"            printf("UNI_OP ");
-"!"             printf("UNI_OP ");
-"+"             printf("SIGNO_BIN_OP ");
-"-"             printf("SIGNO_BIN_OP ");
-"="             printf("ASIGNACION ");
-"principal"     printf("MAIN ");
-"si"            printf("SI ");
-"mientras"      printf("MIENTRAS ");
-"var"           printf("INI_DECLARACION ");
-"finvar"        printf("FIN_DECLARACION ");
-"entrada"       printf("LEER ");
-"hacer"         printf("HACER ");
-"hasta"         printf("HASTA ");
-"verdadero"     printf("BOOLEANOS ");
-"falso"         printf("BOOLEANOS ");
-";"             printf("PUN_COMA ");
-","             printf("SEPARADOR ");
-"("             printf("PAR_IZQ ");
-")"             printf("PAR_DER ");
-"salida"        printf("OUT ");
-"devolver"      printf("DEVOLVER ");
-"["             printf("COR_IZQ ");
-"]"             printf("COR_DER ");
-{entero}        printf("CONST_INT ");
-{real}          printf("CONST_FLOAT ");
-{char}          printf("CONST_CHAR ");
-{string}        printf("CONST_STRING ");
-"entero"        printf("TIPO ");
-"booleano"      printf("TIPO ");
-"caracter"      printf("TIPO ");
-"real"          printf("TIPO ");
-"{"             printf("INICIO_BLOQUE ");
-"}"             printf("FIN_BLOQUE ");
-{ident}         printf("IDENTIFICADOR ");
-\n              printf("\n");
-\t              printf("\t ");
+"*"             return BINARY_OP;
+"/"             return BINARY_OP ;
+"=="            return BINARY_OP ;
+"!="            return BINARY_OP ;
+"<="            return BINARY_OP ;
+">="            return BINARY_OP ;
+"<"             return BINARY_OP ;
+">"             return BINARY_OP ;
+"&&"            return BINARY_OP ;
+"||"            return BINARY_OP ;
+"^"             return BINARY_OP ;
+"**"            return BINARY_OP ;
+"++"            return UNI_OP ;
+"--"            return UNI_OP ;
+"!"             return UNI_OP ;
+"+"             return SIGNO_BIN_OP ;
+"-"             return SIGNO_BIN_OP ;
+"="             return ASIGNACION ;
+"principal"     return MAIN ;
+"si"            return SI ;
+"mientras"      return MIENTRAS ;
+"var"           return INI_DECLARACION ;
+"finvar"        return FIN_DECLARACION ;
+"entrada"       return LEER ;
+"hacer"         return HACER ;
+"hasta"         return HASTA ;
+"verdadero"     return BOOLEANOS ;
+"falso"         return BOOLEANOS ;
+";"             return PUN_COMA ;
+","             return SEPARADOR ;
+"("             return PAR_IZQ ;
+")"             return PAR_DER ;
+"salida"        return OUT ;
+"devolver"      return DEVOLVER ;
+"["             return COR_IZQ ;
+"]"             return COR_DER ;
+{entero}        return CONST_INT ;
+{real}          return CONST_FLOAT ;
+{char}          return CONST_CHAR ;
+{string}        return CONST_STRING ;
+"entero"        return TIPO ;
+"booleano"      return TIPO ;
+"caracter"      return TIPO ;
+"real"          return TIPO ;
+"{"             return INICIO_BLOQUE ;
+"}"             return FIN_BLOQUE ;
+{ident}         return IDENTIFICADOR ;
+\n              ;
+\t              ;
 " "             ;
 {otros}         printf("\n(Linea %d) Error léxico: token %s\n", yylineno, yytext);
 
