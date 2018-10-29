@@ -15,18 +15,18 @@ otros       .
 
 %%
 
-"*"             return BINARY_OP;
-"/"             return BINARY_OP ;
-"=="            return BINARY_OP ;
-"!="            return BINARY_OP ;
-"<="            return BINARY_OP ;
-">="            return BINARY_OP ;
-"<"             return BINARY_OP ;
-">"             return BINARY_OP ;
-"&&"            return BINARY_OP ;
-"||"            return BINARY_OP ;
-"^"             return BINARY_OP ;
-"**"            return BINARY_OP ;
+"*"             return MULTIDIV_OP ;
+"/"             return MULTIDIV_OP ;
+"=="            return EQNEQ_OP ;
+"!="            return EQNEQ_OP ;
+"<="            return RELATIONAL_OP ;
+">="            return RELATIONAL_OP ;
+"<"             return RELATIONAL_OP ;
+">"             return RELATIONAL_OP ;
+"&&"            return OR_OP ;
+"||"            return AND_OP ;
+"^"             return XOR_OP ;
+"**"            return MULTIDIV_OP ;
 "++"            return UNI_OP ;
 "--"            return UNI_OP ;
 "!"             return UNI_OP ;
