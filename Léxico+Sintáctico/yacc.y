@@ -30,7 +30,7 @@
 %token CONST_STRING
 %token IDENTIFICADOR
 
-
+/* Operadores */
 %left OR_OP
 %left AND_OP
 %left XOR_OP
@@ -56,7 +56,7 @@ bloque : INICIO_BLOQUE
 declar_de_subprogs : declar_de_subprogs declar_subprog
                    | ;
                      
-declar_subprog : cabecera_subprog bloque ;         
+declar_subprog : cabecera_subprog bloque ;
 
 declar_de_variables_locales : INI_DECLARACION
                               variables_locales
@@ -110,7 +110,7 @@ sentencia_devolver : DEVOLVER expresion PUN_COMA ;
 sentencia_hacer_hasta : HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA ;
                   
 expresion : PAR_IZQ expresion PAR_DER
-          |	UNI_OP expresion
+          | UNI_OP expresion
           | SIGNO_BIN_OP expresion %prec UNI_OP
           | expresion OR_OP expresion
           | expresion AND_OP expresion
@@ -147,26 +147,10 @@ constante : constante_entera
           | constante_booleana
           | constante_caracter
           | constante_real
-          | constante_array_entero
-          | constante_array_real
-          | constante_array_caracter
-          | constante_array_booleano ;
+          | constante_array ;
 
-signo : SIGNO_BIN_OP
-      | ;
-
-constante_array_entero : INICIO_BLOQUE signo constante_entera PAR_IZQ SEPARADOR signo constante_entera PAR_DER FIN_BLOQUE
-                       | INICIO_BLOQUE signo constante_entera PAR_IZQ SEPARADOR signo constante_entera PAR_DER  PUN_COMA signo constante_entera PAR_IZQ SEPARADOR signo constante_entera PAR_DER FIN_BLOQUE ;
-
-constante_array_real : INICIO_BLOQUE signo constante_real PAR_IZQ SEPARADOR signo constante_real PAR_DER FIN_BLOQUE
-                     | INICIO_BLOQUE signo constante_real PAR_IZQ SEPARADOR signo constante_real PAR_DER  PUN_COMA signo constante_real PAR_IZQ SEPARADOR signo constante_real PAR_DER FIN_BLOQUE ;
-
-constante_array_caracter : INICIO_BLOQUE constante_caracter PAR_IZQ SEPARADOR constante_caracter PAR_DER FIN_BLOQUE
-                         | INICIO_BLOQUE constante_caracter PAR_IZQ SEPARADOR constante_caracter PAR_DER  PUN_COMA constante_caracter PAR_IZQ SEPARADOR constante_caracter PAR_DER FIN_BLOQUE ;
-
-constante_array_booleano : INICIO_BLOQUE constante_booleana PAR_IZQ SEPARADOR constante_booleana PAR_DER FIN_BLOQUE
-                         | INICIO_BLOQUE constante_booleana PAR_IZQ SEPARADOR constante_booleana PAR_DER  PUN_COMA constante_booleana PAR_IZQ SEPARADOR constante_booleana PAR_DER FIN_BLOQUE ;
-
+constante_array : INICIO_BLOQUE lista_expresiones FIN_BLOQUE
+                | INICIO_BLOQUE lista_expresiones PUN_COMA lista_expresiones FIN_BLOQUE ;
 
 %%
 
