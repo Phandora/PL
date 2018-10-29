@@ -1,6 +1,6 @@
 %{
 #include <stdio.h>
-#include "y_tab.h"
+#include "y.tab.h"
 %}
 
 %option yylineno
@@ -35,6 +35,7 @@ otros       .
 "="             return ASIGNACION ;
 "principal"     return MAIN ;
 "si"            return SI ;
+"sino"          return SINO ;
 "mientras"      return MIENTRAS ;
 "var"           return INI_DECLARACION ;
 "finvar"        return FIN_DECLARACION ;
