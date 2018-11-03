@@ -155,11 +155,56 @@ constante_array : INICIO_BLOQUE lista_expresiones FIN_BLOQUE
 %%
 
 #include "lex.yy.c"
+#include <stdio.h>
+#include <stdlib.h>
+
+extern FILE *yyin;
+ 
+int yyparse(void);
 
 void yyerror(char* s) {
     printf("Error: %s", s);
 }
+FILE *abrir_entrada(int argc, char **argv){
 
-int main(){
+	FILE *f=NULL;
+
+	if(argc > 1){
+
+		
+		f=fopen(argv[1],"r");
+
+		if(f==NULL){
+		
+			fprintf(stderr, "Error fichero no encontrado");
+			exit(1);
+
+		}else{
+
+			printf("Leyendo fichero");
+
+		}
+
+	}else{
+
+		printf("Leyendo entrada estándar");
+
+	}
+	return f;
+	
+
+}
+int main(int argc, char **argv){
+
+    yyin= abrir_entrada(argc,argv);
+    int an = yylex();
+    while (an != 0){
+
+	printf("-%d-",an);
+	an = yylex();
+	}
+
+
+
     yyparse();
 }

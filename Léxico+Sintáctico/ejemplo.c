@@ -1,4 +1,3 @@
-
 booleano es_a_mayor_que_b(entero numero_a , entero numero_b){
 	booleano  salidas=falso;
 	
