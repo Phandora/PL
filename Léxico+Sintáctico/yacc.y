@@ -62,7 +62,8 @@ declar_subprog : cabecera_subprog bloque ;
 
 declar_de_variables_locales : INI_DECLARACION
                               variables_locales
-                              FIN_DECLARACION ;
+                              FIN_DECLARACION 
+							  |;
 
 variables_locales : variables_locales cuerpo_declar_variables
                   | cuerpo_declar_variables 
