@@ -95,8 +95,8 @@ sentencia : bloque
           | sentencia_hacer_hasta 
           |error;
 
-sentencia_asignacion : identificador ASIGNACION expresion 
-						|identificador ASIGNACION expresion PUN_COMA;
+sentencia_asignacion : identificador ASIGNACION expresion PUN_COMA ;
+						 
                     
 sentencia_si : SI PAR_IZQ expresion PAR_DER sentencia
              | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia ;
