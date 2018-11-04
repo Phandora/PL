@@ -2,6 +2,8 @@
 #include <stdio.h>
 %}
 
+%error-verbose
+
 %token MAIN
 %token INICIO_BLOQUE
 %token FIN_BLOQUE
@@ -63,21 +65,25 @@ declar_de_variables_locales : INI_DECLARACION
                               FIN_DECLARACION ;
 
 variables_locales : variables_locales cuerpo_declar_variables
-                  | cuerpo_declar_variables ;
+                  | cuerpo_declar_variables 
+                  | error ;
 
 cuerpo_declar_variables : TIPO lista_variables PUN_COMA ;
 
 lista_variables : identificador
-                 identificador SEPARADOR lista_variables ;
+                | identificador SEPARADOR lista_variables ;
                           
 cabecera_subprog : TIPO IDENTIFICADOR PAR_IZQ lista_parametros PAR_DER
                  | TIPO IDENTIFICADOR PAR_IZQ PAR_DER ;
                  
 lista_parametros : lista_parametros SEPARADOR TIPO identificador
-                 | TIPO identificador ;
+                 | TIPO identificador 
+                 | error
+                 ;
 
 sentencias : sentencias sentencia
-           | sentencia ;
+           | sentencia 
+           | error ;
 
 sentencia : bloque
           | sentencia_asignacion
@@ -86,7 +92,8 @@ sentencia : bloque
           | sentencia_entrada
           | sentencia_salida
           | sentencia_devolver
-          | sentencia_hacer_hasta ;
+          | sentencia_hacer_hasta 
+          ;
 
 sentencia_asignacion : identificador ASIGNACION expresion ;
                     
@@ -121,7 +128,8 @@ expresion : PAR_IZQ expresion PAR_DER
           | expresion EQNEQ_OP expresion
           | identificador
           | constante
-          | llamar_funcion ;
+          | llamar_funcion
+          ;
 
 array : IDENTIFICADOR COR_IZQ expresion COR_DER 
       | IDENTIFICADOR COR_IZQ expresion SEPARADOR expresion COR_DER ;
@@ -161,9 +169,10 @@ constante_array : INICIO_BLOQUE lista_expresiones FIN_BLOQUE
 extern FILE *yyin;
  
 int yyparse(void);
+//int yywrap();
 
 void yyerror(char* s) {
-    printf("Error: %s", s);
+    printf("Error: %s, linea:%d\n", s, yylineno);
 }
 FILE *abrir_entrada(int argc, char **argv){
 
@@ -181,30 +190,33 @@ FILE *abrir_entrada(int argc, char **argv){
 
 		}else{
 
-			printf("Leyendo fichero");
+			printf("Leyendo fichero\n");
 
 		}
 
 	}else{
 
-		printf("Leyendo entrada estándar");
+		printf("Leyendo entrada estándar\n");
 
 	}
 	return f;
 	
 
 }
+
 int main(int argc, char **argv){
 
     yyin= abrir_entrada(argc,argv);
-    int an = yylex();
+    /*int an = yylex();
+
     while (an != 0){
 
 	printf("-%d-",an);
 	an = yylex();
-	}
+    
+	}*/
 
+    //printf("\n");
 
-
-    yyparse();
+    return yyparse();
 }
