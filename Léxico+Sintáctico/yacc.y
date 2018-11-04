@@ -83,7 +83,7 @@ lista_parametros : lista_parametros SEPARADOR TIPO identificador
 
 sentencias : sentencias sentencia
            | sentencia 
-           | error ;
+           ;
 
 sentencia : bloque
           | sentencia_asignacion
@@ -93,9 +93,10 @@ sentencia : bloque
           | sentencia_salida
           | sentencia_devolver
           | sentencia_hacer_hasta 
-          ;
+          |error;
 
-sentencia_asignacion : identificador ASIGNACION expresion ;
+sentencia_asignacion : identificador ASIGNACION expresion 
+						|identificador ASIGNACION expresion PUN_COMA;
                     
 sentencia_si : SI PAR_IZQ expresion PAR_DER sentencia
              | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia ;
