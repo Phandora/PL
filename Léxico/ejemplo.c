@@ -2,13 +2,13 @@
 booleano es_a_mayor_que_b(entero numero_a , entero numero_b){
 	booleano  salidas=falso;
 	
-	si (numero_a > numero_b){
+	si (nu···mero_a > numero_b){
 		
 		salidas=verdadero;
 		
 	}
 	
-	devolver salidas;
+	dev··olver salidas;
 }
 
 entero principal(){

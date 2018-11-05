@@ -1,22 +1,22 @@
 principal {
 	var
-	entero ve ;
-	real vf ;
-	caracter vc ;
-	booleano vl ;
+		entero ve b,c,g 
+		real vf, n m ;
+		caracter vc ;
+		boole·ano vl ;
+		entero matriz[2,3];
 	finvar
-	entero funcionA (entero a1, real a2, caracter a3)
-	{
+	
+	entero funcionA (ente ro a1, real a2, caracter a3){
 		var
 			entero x1, x2 ;
 		finvar
-		caracter funcionB (caracter b1, booleano b2)
-		{
+
+		caracter funcionB (caracter b1, booleano b2){
 			var
 			real xf, x2 ;
 			finvar
-			real funcionC (booleano c1, entero c2)
-			{
+			real funcionC (booleano c1, entero c2){
 				var
 				real x1 ;
 				finvar
@@ -27,47 +27,56 @@ principal {
 				x1= 3.1 ;
 				devolver x1 ;
 			}
+			
 			xf= functionC (true, 10);
 			x2= xf*(funcionC(false,1)-funcionC(true,23))/10.0;
+			
 			mientras (x2*funcionC(false,1)-xf<10.0)
-			x2= x2*xf ;
+				x2= x2*xf ;
 		}
-		real funcionD (real d1)
-		{
+		
+		real funcionD (real d1){
 			var
-			caracter dato ;
-			entero valor ;
+				caracter dato ;
+				entero valor ;
 			finvar
-			caracter funcionE (caracter e1, caracter e2)
-			{
+			
+			caracter funcionE (caracter e1, caracter e2){
 				entrada "enteroroduzca dos caracteres: ", e1, e2 ;
 				si (e1=='a')
-				devolver e1 ;
-				sino si (e1=='b')
-				devolver e2 ;
-				sino
-				devolver ' ';
+					devolver e1 ;
+				sino 
+					si (e1=='b')
+						devolver e2 ;
+					sino
+						devolver ' ';
 			}
 			entrada "enteroroduzca un valor entero: ", valor ;
-		si (d1>0.0)
-		{
-			var
-			entero dato ;
-			finvar
-			dato= 2 ;
-			dato= valor*20/dato ;
+		
+			si (d1>0.0+++){
+				var
+					entero dato ;
+				finvar
+			
+				dato= 2) ;
+				dato= valor*20/dato ;
+			}
+			sino {
+				valor= valor * 100 ;
+				d1= d1/1000.0 ;
+			}
+		
+			devolver d1 ;
 		}
-		sino {
-			valor= valor * 100 ;
-			d1= d1/1000.0 ;
-		}
-		devolver d1 ;
+
+		devolver d2;
 	}
-	pe= pe<-10 ; 
-	pf= pf<-10.0 ; 
-	pc= pc<-'#' ;
-	si (?(pe<-20) == 20) 
+
+	matriz = {1,2; 2,3,4};
+	matriz[1,funcionD(falso, 23)] = 45;
+
+	si(matriz[1,1]==3)
+		salida "Igual";
 	sino
-		pe= pe * pe2 ;
-		pe= pe2 - pe <- 10 * (20/2000) ;
+		M1 = M2 ** M3; 
 }

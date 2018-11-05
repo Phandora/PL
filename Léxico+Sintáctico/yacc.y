@@ -104,12 +104,19 @@ sentencia_si : SI PAR_IZQ expresion PAR_DER sentencia
              
 sentencia_mientras : MIENTRAS PAR_IZQ expresion PAR_DER sentencia ;
 
-sentencia_entrada : LEER lista_variables PUN_COMA ;
+sentencia_entrada : LEER lista_var_cad PUN_COMA ;
+
+lista_var_cad : lista_var_cad SEPARADOR identificador
+              | CONST_STRING
+              | identificador
+              ;
+
 
 sentencia_salida : OUT lista_exp_cad PUN_COMA ;
                  
-lista_exp_cad : lista_expresiones SEPARADOR exp_cad
-              | exp_cad ;
+lista_exp_cad : lista_exp_cad SEPARADOR exp_cad
+              | exp_cad 
+              ;
 
 exp_cad : expresion
         | CONST_STRING ;

@@ -36,11 +36,11 @@ principal {
         
         result = derechaIzquierda - izquierdaDerecha;
         
-        si(result != 0){
-            salida "Es de rango 3";
-        }sino{
-            salida "No es de rango 3";
-        }
+        si(result != 0)
+            salida "Es de rango 3: result: ", result;
+        sino
+            salida "No es de rango 3, result: ", result;
+        
     }
 
     booleano QuienEsMayor(entero vector, entero limite, entero tamanio){
@@ -66,4 +66,6 @@ principal {
     }
 
     salida Potencia(base, potencia);
+    entrada "Lee lo siguiente: " , adios , funciona;
+    entrada hola, adios, funciona;
 }
