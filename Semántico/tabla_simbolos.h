@@ -1,0 +1,55 @@
+#ifndef _TABLA_SIMBOLOS_H
+#define _TABLA_SIMBOLOS_H
+
+typedef enum {
+    marca,
+    funcion,            /* si es subprograma */
+    variable,           /* si es variable */
+    parametro_formal,   /* si es parametro formal */
+} tipoEntrada ;
+
+typedef enum {
+    entero,
+    real,
+    caracter,
+    booleano,
+    array,
+    desconocido,
+    no_asignado
+} dtipo ;
+
+typedef struct {
+    tipoEntrada entrada ;
+    char *nombre ;
+    dtipo tipoDato ;
+    unsigned int parametros ;
+    unsigned int dimensiones ;
+    int TamDimen1 ; /* Tamaño Dimensión 1 */
+    int TamDimen2 ; /* Tamaño Dimensión 2 */
+} entradaTS ;
+
+
+#define MAX_TS 500
+unsigned int TOPE=0 ;       /* Tope de la pila */
+unsigned int Subprog ;      /* Indicador de comienzo de bloque de un subprog */
+entradaTS TS[MAX_TS] ;      /* Pila de la tabla de símbolos */
+
+typedef struct {
+    int atrib ;     /* Atributo del símbolo (si tiene) */
+    char *lexema ;  /* Nombre del lexema */
+    dtipo tipo ;    /* Tipo del símbolo */
+} atributos ;
+
+// A partir de ahora, cada símbolo tiene una estructura de tipo atributos
+#define YYSTYPE atributos 
+
+// FUNCIONES:
+
+void insertarVariable(tipoEntrada tipo, char *name, dtipo type);
+void insertarFuncion(char *name, dtipo type, unsigned int param);
+void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2=0);
+void eliminarBloque();
+entradaTS* buscarSimbolo(char *nombreSim);
+void insertarMarca();
+
+#endif
