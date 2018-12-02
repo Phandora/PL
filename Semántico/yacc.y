@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include "tabla_simbolos.h"
 %}
 
 %error-verbose
@@ -49,11 +50,11 @@
 
 programa : MAIN bloque ;
 
-bloque : INICIO_BLOQUE
+bloque : INICIO_BLOQUE  {insertaMarca();}
          declar_de_variables_locales
          declar_de_subprogs
          sentencias
-         FIN_BLOQUE ;
+         FIN_BLOQUE {eliminarBloque();};
          
 declar_de_subprogs : declar_de_subprogs declar_subprog
                    | ;
@@ -69,12 +70,12 @@ variables_locales : variables_locales cuerpo_declar_variables
                   | cuerpo_declar_variables 
                   | error ;
 
-cuerpo_declar_variables : TIPO lista_variables PUN_COMA ;
+cuerpo_declar_variables : TIPO {$2.dtipo = $1.dtipo} lista_variables PUN_COMA ;
 
-lista_variables : identificador
-                | identificador SEPARADOR lista_variables ;
+lista_variables : {$1.dtipo = $$.dtipo} identificador
+                | {$1.dtipo = $$.dtipo} identificador SEPARADOR {$3.dtipo = $$.dtipo} lista_variables ;
                           
-cabecera_subprog : TIPO IDENTIFICADOR PAR_IZQ lista_parametros PAR_DER
+cabecera_subprog : TIPO IDENTIFICADOR PAR_IZQ lista_parametros PAR_DER {insertarFuncion($2.lexema,$1.tipo, )}
                  | TIPO IDENTIFICADOR PAR_IZQ PAR_DER ;
                  
 lista_parametros : lista_parametros SEPARADOR TIPO identificador
@@ -140,7 +141,7 @@ expresion : PAR_IZQ expresion PAR_DER
           | llamar_funcion
           ;
 
-array : IDENTIFICADOR COR_IZQ expresion COR_DER 
+array : IDENTIFICADOR COR_IZQ expresion COR_DER
       | IDENTIFICADOR COR_IZQ expresion SEPARADOR expresion COR_DER ;
 
 lista_expresiones : lista_expresiones SEPARADOR expresion

@@ -30,9 +30,10 @@ typedef struct {
 
 
 #define MAX_TS 500
-unsigned int TOPE=0 ;       /* Tope de la pila */
-unsigned int Subprog ;      /* Indicador de comienzo de bloque de un subprog */
-entradaTS TS[MAX_TS] ;      /* Pila de la tabla de símbolos */
+extern unsigned int TOPE=0 ;       /* Tope de la pila */
+extern unsigned int Subprog ;      /* Indicador de comienzo de bloque de un subprog */
+extern entradaTS TS[MAX_TS] ;      /* Pila de la tabla de símbolos */
+//extern dtipo tipo_global;
 
 typedef struct {
     int atrib ;     /* Atributo del símbolo (si tiene) */
@@ -47,9 +48,10 @@ typedef struct {
 
 void insertarVariable(tipoEntrada tipo, char *name, dtipo type);
 void insertarFuncion(char *name, dtipo type, unsigned int param);
-void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2=0);
+void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2);
 void eliminarBloque();
 entradaTS* buscarSimbolo(char *nombreSim);
 void insertarMarca();
+
 
 #endif

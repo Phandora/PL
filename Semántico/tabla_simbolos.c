@@ -35,40 +35,40 @@ void insertarMarca(){
 
 void eliminarBloque(){
 	
-	entradaTS vacio =  {.entrada = None,
-                        .nombre  = "",
-                        .tipoDato = desconocido,
-                        .parametros = 0,
-                        .dimensiones = 0,
-                        .TamDimen1 = 0,
-                        .TamDimen2 = 0 };
-
-	while (TS[TOPE].entrada != marca ){
-		TS[TOPE]=vacio;
+	while (TS[TOPE].entrada != marca && TOPE > 0){
 		TOPE--;
 	}
+	if(TOPE>0){
+        TOPE--;
+    }
 	
-	TS[TOPE]=vacio; 
-	TOPE--;
 	
 }
 
 void insertarFuncion(char *name, dtipo type, unsigned int param){
-
+        entradaTS var   =    {.entrada = funcion,
+                              .nombre  = name,
+                              .tipoDato = type,
+                              .parametros = param,
+                              .dimensiones = 0,
+                              .TamDimen1 = 0,
+                              .TamDimen2 = 0 };
+        TS[TOPE] = var;
+        TOPE++;
     
 }
 
 
 
-void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2=0){
+void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2){
     entradaTS var   =    {.entrada = variable,
                           .nombre  = name,
                           .tipoDato = array,
                           .parametros = 0,
                           .dimensiones = dim,
                           .TamDimen1 = dim1,
-                          .TamDimen2 = dim2,
-                          .tipoArray = type };
+                          .TamDimen2 = dim2};
+                         // .tipoArray = type };
     
     TS[TOPE];
     TOPE ++;

@@ -15,23 +15,23 @@ otros       .
 
 %%
 
-"*"             return MULTIDIV_OP ;
-"/"             return MULTIDIV_OP ;
-"=="            return EQNEQ_OP ;
-"!="            return EQNEQ_OP ;
-"<="            return RELATIONAL_OP ;
-">="            return RELATIONAL_OP ;
-"<"             return RELATIONAL_OP ;
-">"             return RELATIONAL_OP ;
-"&&"            return OR_OP ;
-"||"            return AND_OP ;
-"^"             return XOR_OP ;
-"**"            return MULTIDIV_OP ;
-"++"            return UNI_OP ;
-"--"            return UNI_OP ;
-"!"             return UNI_OP ;
-"+"             return SIGNO_BIN_OP ;
-"-"             return SIGNO_BIN_OP ;
+"*"             {yylval.lexema=strdup(yytext); yylval.atrib= 0 ;return MULTIDIV_OP ;} 
+"/"             {yylval.lexema=strdup(yytext); yylval.atrib= 1 ;return MULTIDIV_OP ;}
+"=="            {yylval.lexema=strdup(yytext); yylval.atrib= 0 ;return EQNEQ_OP ;}
+"!="            {yylval.lexema=strdup(yytext); yylval.atrib= 1 ;return EQNEQ_OP ;}
+"<="            {yylval.lexema=strdup(yytext); yylval.atrib= 0 ;return RELATIONAL_OP ;}
+">="            {yylval.lexema=strdup(yytext); yylval.atrib= 1 ;return RELATIONAL_OP ;}
+"<"             {yylval.lexema=strdup(yytext); yylval.atrib= 2 ;return RELATIONAL_OP ;}
+">"             {yylval.lexema=strdup(yytext); yylval.atrib= 3 ;return RELATIONAL_OP ;}
+"&&"            {yylval.lexema=strdup(yytext); yylval.atrib= 0 ;return OR_OP ;}
+"||"            {yylval.lexema=strdup(yytext); yylval.atrib= 0 ;return AND_OP ;}
+"^"             {yylval.lexema=strdup(yytext); yylval.atrib= 0 ;return XOR_OP ;}
+"**"            {yylval.lexema=strdup(yytext); yylval.atrib= 2 ;return MULTIDIV_OP ;}
+"++"            {yylval.lexema=strdup(yytext); yylval.atrib= 0 ;return UNI_OP ;}
+"--"            {yylval.lexema=strdup(yytext); yylval.atrib= 1 ;return UNI_OP ;}
+"!"             {yylval.lexema=strdup(yytext); yylval.atrib= 2 ;return UNI_OP ;}
+"+"             {yylval.lexema=strdup(yytext); yylval.atrib= 0 ;return SIGNO_BIN_OP ;}
+"-"             {yylval.lexema=strdup(yytext); yylval.atrib= 1 ;return SIGNO_BIN_OP ;}
 "="             return ASIGNACION ;
 "principal"     return MAIN ;
 "si"            return SI ;
@@ -56,13 +56,13 @@ otros       .
 {real}          return CONST_FLOAT ;
 {char}          return CONST_CHAR ;
 {string}        return CONST_STRING ;
-"entero"        return TIPO ;
-"booleano"      return TIPO ;
-"caracter"      return TIPO ;
-"real"          return TIPO ;
+"entero"        {yylval.atrib=0; return TIPO ;} 
+"booleano"      {yylval.atrib=1; return TIPO ;} 
+"caracter"      {yylval.atrib=2; return TIPO ;} 
+"real"          {yylval.atrib=3; return TIPO ;} 
 "{"             return INICIO_BLOQUE ;
 "}"             return FIN_BLOQUE ;
-{ident}         return IDENTIFICADOR ;
+{ident}         {yylval.lexema=strdup(yytext); return IDENTIFICADOR ;}
 \n              ;
 \t              ;
 " "             ;
