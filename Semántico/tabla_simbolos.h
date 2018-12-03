@@ -13,7 +13,6 @@ typedef enum {
     real,
     caracter,
     booleano,
-    array,
     desconocido,
     no_asignado
 } dtipo ;
@@ -33,7 +32,12 @@ typedef struct {
 extern unsigned int TOPE=0 ;       /* Tope de la pila */
 extern unsigned int Subprog ;      /* Indicador de comienzo de bloque de un subprog */
 extern entradaTS TS[MAX_TS] ;      /* Pila de la tabla de símbolos */
-//extern dtipo tipo_global;
+extern dtipo tipo_global;          /* Almacena el tipo global */
+extern unsigned int funcion_actual = -1;
+extern int decVar = 0;             /* Varible control */
+extern int decParam = 0;           /* Variable control */
+extern int nParam = 0;             /* Variable control */
+extern int pos_fun = 0;             /* Variable control */
 
 typedef struct {
     int atrib ;     /* Atributo del símbolo (si tiene) */
@@ -46,12 +50,14 @@ typedef struct {
 
 // FUNCIONES:
 
-void insertarVariable(tipoEntrada tipo, char *name, dtipo type);
+void insertarVariable(tipoEntrada entrada, char *name, dtipo type);
 void insertarFuncion(char *name, dtipo type, unsigned int param);
 void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2);
 void eliminarBloque();
 entradaTS* buscarSimbolo(char *nombreSim);
+int buscarPos(char * nombreSim);
 void insertarMarca();
+void updateParam();
 
 
 #endif
