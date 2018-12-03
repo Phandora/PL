@@ -42,8 +42,8 @@ otros       .
 "entrada"       return LEER ;
 "hacer"         return HACER ;
 "hasta"         return HASTA ;
-"verdadero"     {yylval.lexema=strdup(yytext); yyval.atrib=0; return BOOLEANOS ;}
-"falso"         {yylval.lexema=strdup(yytext); yyval.atrib=1; return BOOLEANOS ;}
+"verdadero"     {yylval.lexema=strdup(yytext); yylval.atrib=0; return BOOLEANOS ;}
+"falso"         {yylval.lexema=strdup(yytext); yylval.atrib=1; return BOOLEANOS ;}
 ";"             return PUN_COMA ;
 ","             return SEPARADOR ;
 "("             return PAR_IZQ ;
@@ -56,10 +56,10 @@ otros       .
 {real}          {yylval.lexema=strdup(yytext); return CONST_FLOAT ;}
 {char}          {yylval.lexema=strdup(yytext); return CONST_CHAR ;}
 {string}        {yylval.lexema=strdup(yytext); return CONST_STRING ;}
-"entero"        {yylval.lexema=strdup(yytext); yylval.atrib=0; yyval.tipo = entero; return TIPO ;} 
-"booleano"      {yylval.lexema=strdup(yytext); yylval.atrib=1; yyval.tipo = booleano; return TIPO ;} 
-"caracter"      {yylval.lexema=strdup(yytext); yylval.atrib=2; yyval.tipo = caracter; return TIPO ;} 
-"real"          {yylval.lexema=strdup(yytext); yylval.atrib=3; yyval.tipo = real; return TIPO ;} 
+"entero"        {yylval.lexema=strdup(yytext); yylval.atrib=0; yylval.tipo = entero; return TIPO ;} 
+"booleano"      {yylval.lexema=strdup(yytext); yylval.atrib=1; yylval.tipo = booleano; return TIPO ;} 
+"caracter"      {yylval.lexema=strdup(yytext); yylval.atrib=2; yylval.tipo = caracter; return TIPO ;} 
+"real"          {yylval.lexema=strdup(yytext); yylval.atrib=3; yylval.tipo = real; return TIPO ;} 
 "{"             return INICIO_BLOQUE ;
 "}"             return FIN_BLOQUE ;
 {ident}         {yylval.lexema=strdup(yytext); return IDENTIFICADOR ;}

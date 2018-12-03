@@ -1,13 +1,13 @@
 principal {
 	var
-		entero ve b,c,g 
-		real vf, n m ;
+		entero ve, b,c,g 
+		real vf, n, m ;
 		caracter vc ;
-		boole·ano vl ;
-		entero matriz[2,3];
+		booleano vl ;
+
 	finvar
 	
-	entero funcionA (ente ro a1, real a2, caracter a3){
+	entero funcionA (entero a1, real a2, caracter a3){
 		var
 			entero x1, x2 ;
 		finvar
@@ -72,11 +72,6 @@ principal {
 		devolver d2;
 	}
 
-	matriz = {1,2; 2,3,4};
-	matriz[1,funcionD(falso, 23)] = 45;
+b=0;
 
-	si(matriz[1,1]==3)
-		salida "Igual";
-	sino
-		M1 = M2 ** M3; 
 }

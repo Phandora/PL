@@ -1,5 +1,6 @@
 #ifndef _TABLA_SIMBOLOS_H
 #define _TABLA_SIMBOLOS_H
+#include <stdio.h>
 
 typedef enum {
     marca,
@@ -29,15 +30,15 @@ typedef struct {
 
 
 #define MAX_TS 500
-extern unsigned int TOPE=0 ;       /* Tope de la pila */
+extern unsigned int TOPE;       /* Tope de la pila */
 extern unsigned int Subprog ;      /* Indicador de comienzo de bloque de un subprog */
 extern entradaTS TS[MAX_TS] ;      /* Pila de la tabla de símbolos */
 extern dtipo tipo_global;          /* Almacena el tipo global */
-extern unsigned int funcion_actual = -1;
-extern int decVar = 0;             /* Varible control */
-extern int decParam = 0;           /* Variable control */
-extern int nParam = 0;             /* Variable control */
-extern int pos_fun = 0;             /* Variable control */
+extern unsigned int funcion_actual;
+extern int decVar;             /* Varible control */
+extern int decParam;           /* Variable control */
+extern int nParam;             /* Variable control */
+extern int pos_fun;             /* Variable control */
 
 typedef struct {
     int atrib ;     /* Atributo del símbolo (si tiene) */

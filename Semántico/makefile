@@ -1,5 +1,7 @@
-prueba: y.tab.o
-	gcc -o prueba y.tab.o
+prueba: y.tab.o tabla_simbolos.o
+	gcc -o prueba y.tab.o tabla_simbolos.o
+tabla_simbolos.o: tabla_simbolos.c
+	gcc -c -o tabla_simbolos.o tabla_simbolos.c
 y.tab.o: y.tab.c
 	gcc -c y.tab.c
 y.tab.c: yacc.y lex.yy.c
@@ -11,3 +13,4 @@ clean:
 all:
 	make clean
 	make prueba
+
