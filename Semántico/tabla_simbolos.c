@@ -14,7 +14,7 @@ int pos_fun = 0;             /* Variable control */
 
 
 void insertarVariable(tipoEntrada entrada, char *name, dtipo type){
-    printf("Insertar Variable\n");
+   
     entradaTS *encontrado = buscarSimbolo(name);
     if(encontrado == NULL){
         entradaTS var   =  {.entrada = entrada,
@@ -26,7 +26,7 @@ void insertarVariable(tipoEntrada entrada, char *name, dtipo type){
                             .TamDimen2 = 0 };
         TS[TOPE] = var;
         TOPE++;
-        printf("Variable\n");
+        printf("Insertar Variable  %s--%d\n",name,type);
     }
     else{
         printf("Error Sintáctico %s ya declarado", name);
@@ -36,7 +36,7 @@ void insertarVariable(tipoEntrada entrada, char *name, dtipo type){
 
 
 void insertarMarca(){
-    printf("Marca\n");
+    
     entradaTS var   =    {.entrada = marca,
                           .nombre  = "marca",
                           .tipoDato = desconocido,
@@ -51,7 +51,7 @@ void insertarMarca(){
 }
 
 void eliminarBloque(){
-    printf("Elimino\n");
+    printf("Elimino Bloque\n");
 	while (TS[TOPE].entrada != marca && TOPE > 0){
 		TOPE--;
 	}
@@ -62,7 +62,7 @@ void eliminarBloque(){
 }
 
 void insertarFuncion(char *name, dtipo type, unsigned int param){
-    printf("Inserto funcion\n");
+   
     entradaTS *encontrado = buscarSimbolo(name);
     if(encontrado == NULL){
         entradaTS var   =    {.entrada = funcion,
@@ -75,6 +75,7 @@ void insertarFuncion(char *name, dtipo type, unsigned int param){
         TS[TOPE] = var;
         funcion_actual = TOPE;
         TOPE++;
+		printf("Inserto funcion %s\n",name);
     }
     else{
         printf("Error Sintáctico %s ya declarado", name);
@@ -82,7 +83,7 @@ void insertarFuncion(char *name, dtipo type, unsigned int param){
 }
 
 void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2){
-    printf("Inserto array\n");
+    
     entradaTS var   =    {.entrada = variable,
                           .nombre  = name,
                           .tipoDato = type,
@@ -93,36 +94,45 @@ void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2)
     
     TS[TOPE];
     TOPE ++;
+	printf("Inserto array %s\n",name);
 }
 
 entradaTS * buscarSimbolo(char * nombreSim){
-    printf("Busco simbolo\n");
+    printf("Busco simbolo %s\n",nombreSim);
     for ( int i = TOPE-1; i >= 0; i--){
         //printf("%d\n",i);
         if (strcmp(TS[i].nombre, nombreSim) == 0){
-            printf("Encontrado simbolo\n");
+            printf("Encontrado simbolo %s\n",nombreSim);
             return &TS[i];
         }
     
     }
 
-    printf("Busco simbolo y no encuentro\n");
+    printf("Busco simbolo y no encuentro %s\n",nombreSim);
     return NULL;
 }
 
 int buscarPos(char * nombreSim){
-    printf("Busco pos\n");
+    printf("Busco pos de %s\n",nombreSim);
     for ( int i = TOPE-1; i >= 0; i--){
-        if (strcmp(TS[i].nombre, nombreSim) == 0)
+        if (strcmp(TS[i].nombre, nombreSim) == 0){
+			printf("Busco simbolo y esta en la pos %d\n",i);
             return i;
+		}
     }
-
-    return NULL;
+	
 }
 
 
 void updateParam(){
-    printf("update\n");
+    printf("Aumentando el numero de parametros\n");
     ++TS[funcion_actual].parametros;
+}
+
+
+void valores_en_pila(){
+	for ( int i = 0; i < TOPE; i++){
+		printf("PILA- Pos:%d  Nombre:%s  Tipo:%d \n",i,TS[i].nombre,TS[i].tipoDato);
+	}
 }
 

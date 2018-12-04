@@ -98,12 +98,12 @@ sentencia : bloque
           | sentencia_hacer_hasta 
           |error;
 
-sentencia_asignacion : identificador ASIGNACION expresion PUN_COMA {if($1.tipo != $3.tipo) printf("ERROR");};	 
+sentencia_asignacion : identificador ASIGNACION expresion PUN_COMA {if($1.tipo != $3.tipo) printf("ERROR en la sentencia de asignacion tipo1%d  tipo2%d\n",$1.tipo,$2.tipo);};	 
                     
-sentencia_si : SI PAR_IZQ expresion PAR_DER sentencia {if($3.tipo != booleano) printf("ERROR");}
-             | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia {if($3.tipo != booleano) printf("ERROR");};
+sentencia_si : SI PAR_IZQ expresion PAR_DER sentencia {if($3.tipo != booleano) printf("ERROR en la sentencia si \n");}
+             | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia {if($3.tipo != booleano) printf("ERROR en la sentencia si-sino \n");};
              
-sentencia_mientras : MIENTRAS PAR_IZQ expresion PAR_DER sentencia {if($3.tipo != booleano) printf("ERROR");};
+sentencia_mientras : MIENTRAS PAR_IZQ expresion PAR_DER sentencia {if($3.tipo != booleano) printf("ERROR en la sentencia mientras \n");};
 
 sentencia_entrada : LEER lista_var_cad PUN_COMA ;
 
@@ -122,28 +122,28 @@ lista_exp_cad : lista_exp_cad SEPARADOR exp_cad
 exp_cad : expresion
         | CONST_STRING ;
   
-sentencia_devolver : DEVOLVER expresion PUN_COMA {if($2.tipo != TS[funcion_actual].tipoDato) printf("ERROR");};
+sentencia_devolver : DEVOLVER expresion PUN_COMA {if($2.tipo != TS[funcion_actual].tipoDato) printf("ERROR en la sentencia devolver \n");};
 
-sentencia_hacer_hasta : HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA {if($5.tipo != booleano) printf("ERROR");};
+sentencia_hacer_hasta : HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA {if($5.tipo != booleano) printf("ERROR en la sentencia hacer-hasta \n");};
                   
 expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo;}
           | UNI_OP expresion {    
                 switch($1.atrib){
                     case 0:
                         if($2.tipo != entero && $2.tipo != real) 
-                            printf("Error. Tipos no compatibles");
+                            printf("Error. Tipos no compatibles en expresion Unaria\n");
                         else
                             $$.tipo = $2.tipo;
                     break;
                     case 1:
                         if($2.tipo != entero && $2.tipo != real) 
-                            printf("Error. Tipos no compatibles");
+                            printf("Error. Tipos no compatibles en expresion Unaria\n");
                         else
                             $$.tipo = $2.tipo;                          
                     break;
                     case 2:
                         if($2.tipo != booleano)  
-                            printf("Error. Tipos no compatibles");
+                            printf("Error. Tipos no compatibles en expresion Unaria\n");
                         else
                             $$.tipo = $2.tipo;                          
                     break;
@@ -152,26 +152,26 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo;}
 
           | SIGNO_BIN_OP expresion %prec UNI_OP {
                 if($2.tipo != entero && $2.tipo != real)
-                    printf("Error. Tipos no compatibles");
+                    printf("Error. Tipos no compatibles en expresion Binaria+Unaria\n");
                 else
                     $$.tipo = $2.tipo;                  
             }
           | expresion OR_OP expresion {
                 if($1.tipo != $3.tipo){
-                    printf("Error. Tipos no compatibles");
+                    printf("Error. Tipos no compatibles en expresion Or\n");
                 }
                 else if ($1.tipo != booleano) 
-                    printf("ERROR");
+                    printf("ERROR. Tipos no compatibles en expresion Or\n");
                 else{
                     $$.tipo = booleano;                   
                 }              
           }
           | expresion AND_OP expresion {
                 if($1.tipo != $3.tipo){
-                    printf("Error. Tipos no compatibles");
+                    printf("Error. Tipos no compatibles en expresion And\n");
                 }
                 else if ($1.tipo != booleano) 
-                    printf("ERROR");
+                    printf("ERROR. Tipos no compatibles en expresion And\n");
                 else{
                     $$.tipo = booleano;                   
                 }              
@@ -179,38 +179,38 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo;}
           | expresion XOR_OP expresion 
           {
                 if($1.tipo != $3.tipo){
-                    printf("Error. Tipos no compatibles");
+                    printf("Error. Tipos no compatibles en expresion Xor\n");
                 }
                 else if ($1.tipo != booleano) 
-                    printf("ERROR");
+                    printf("ERROR. Tipos no compatibles en expresion Xor\n");
                 else{
                     $$.tipo = booleano;                   
                 }              
           }
           | expresion SIGNO_BIN_OP expresion
           {if(($1.tipo != $3.tipo) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) 
-                printf("Error. Tipos no compatibles");
+                printf("Error. Tipos no compatibles en expresion Binaria\n");
             else
                 $$.tipo = $1.tipo;
           }
           | expresion MULTIDIV_OP expresion
-          {if(($1.tipo != $3.tipo) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) 
-                printf("Error. Tipos no compatibles");
+          {if(($1.tipo != $3.tipo && ($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) && ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) 
+                printf("Error. Tipos no compatibles en expresion mutiplicacion y div\n");
             else
                 $$.tipo = $1.tipo;
           }
           | expresion RELATIONAL_OP expresion
           {if(($1.tipo != $3.tipo) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) 
-                printf("Error. Tipos no compatibles");
+                printf("Error. Tipos no compatibles en expresion Condicional_numerica\n");
             else
-                $$.tipo = $1.tipo;
+                $$.tipo = booleano;
           }
           | expresion EQNEQ_OP expresion {
               if($1.tipo != $3.tipo){
-                    printf("Error. Tipos no compatibles");
+                    printf("Error. Tipos no compatibles en expresion Condicional_booleana\n");
                 }
                 else if ($1.tipo != booleano) 
-                    printf("ERROR");
+                    printf("ERROR  Tipos no compatibles en expresion Condicional_booleana\n");
                 else{
                     $$.tipo = booleano;                   
                 } 
@@ -225,30 +225,36 @@ array : IDENTIFICADOR COR_IZQ expresion COR_DER
 
 lista_expresiones : lista_expresiones SEPARADOR expresion 
                   {nParam++;
-                    if(TS[pos_fun+nParam].tipoDato!=$1.tipo)
-                        printf("Error. Parametro de tipo incorrecto");                    
+                    if(TS[pos_fun+nParam].tipoDato!=$3.tipo)
+                        printf("Error. Parametro de tipo incorrecto \n");                   
                   }
                   | expresion 
                   {nParam=1 ; 
                   if(TS[pos_fun+nParam].tipoDato!=$1.tipo)
-                        printf("Error. Parametro de tipo incorrecto");                    
+                        printf("Error. Parametro de tipo incorrecto  \n");                    
                   };
 
-llamar_funcion : IDENTIFICADOR PAR_IZQ {pos_fun= buscarPos($1.lexema);} lista_expresiones PAR_DER
+llamar_funcion : IDENTIFICADOR PAR_IZQ {entradaTS *id = buscarSimbolo($1.lexema);
+                    if(id == NULL)
+                        printf("funcion no declarada\n");
+                    else{ pos_fun= buscarPos($1.lexema);}
+				} 
+				lista_expresiones PAR_DER
                 {entradaTS *id = buscarSimbolo($1.lexema);
                     if(id == NULL)
-                        printf("funcion no declarada");
+                        printf("funcion no declarada\n");
                     else{
                         if((*id).parametros!=nParam)
-                            printf("numero de parametros erroneos");
+                            printf("numero de parametros erroneos\n");
                         else
                             $$.tipo=(*id).tipoDato;
+							
                     }    
                 }
                | IDENTIFICADOR PAR_IZQ PAR_DER 
                  {entradaTS *id = buscarSimbolo($1.lexema);
                     if(id == NULL)
-                        printf("funcion no declarada");
+                        printf("funcion no declarada\n");
                     else{
                         $$.tipo=(*id).tipoDato;
                     }    
@@ -256,7 +262,7 @@ llamar_funcion : IDENTIFICADOR PAR_IZQ {pos_fun= buscarPos($1.lexema);} lista_ex
 
 constante_entera : CONST_INT ;
 
-constante_booleana : BOOLEANOS ;
+constante_booleana : BOOLEANOS {$$.tipo=booleano;};
 
 constante_real : CONST_FLOAT ;
 
@@ -270,17 +276,18 @@ identificador : IDENTIFICADOR {
         else{
             entradaTS *id = buscarSimbolo($1.lexema);
             if(id == NULL)
-                printf("identificador no declarado");
+                printf("identificador no declarado\n");
             else{
                 $$.lexema = (*id).nombre;
                 $$.tipo = (*id).tipoDato;
+				
             }    
         }
     }
               | array ;
 
 constante : constante_entera {$$.tipo=entero;}
-          | constante_booleana {$$.tipo=booleano;}
+          | constante_booleana {$$.tipo=$1.tipo;}
           | constante_caracter {$$.tipo=caracter;}
           | constante_real {$$.tipo=real;}
           | constante_array ;

@@ -59,6 +59,7 @@ entradaTS* buscarSimbolo(char *nombreSim);
 int buscarPos(char * nombreSim);
 void insertarMarca();
 void updateParam();
+void valores_en_pila();
 
 
 #endif

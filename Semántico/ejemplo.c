@@ -1,6 +1,6 @@
 principal {
 	var
-		entero ve, b,c,g 
+		entero ve, b,c,g; 
 		real vf, n, m ;
 		caracter vc ;
 		booleano vl ;
@@ -28,10 +28,10 @@ principal {
 				devolver x1 ;
 			}
 			
-			xf= functionC (true, 10);
-			x2= xf*(funcionC(false,1)-funcionC(true,23))/10.0;
+			xf= funcionC (verdadero, 10);
+			x2= xf*(funcionC(falso,1)-funcionC(verdadero,23))/10.0;
 			
-			mientras (x2*funcionC(false,1)-xf<10.0)
+			mientras (x2*funcionC(falso,1)-xf<10.0)
 				x2= x2*xf ;
 		}
 		
@@ -53,12 +53,12 @@ principal {
 			}
 			entrada "enteroroduzca un valor entero: ", valor ;
 		
-			si (d1>0.0+++){
+			si (d1>0.0){
 				var
 					entero dato ;
 				finvar
 			
-				dato= 2) ;
+				dato= 2;
 				dato= valor*20/dato ;
 			}
 			sino {
