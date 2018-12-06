@@ -1,7 +1,7 @@
 principal {
 	var
-		entero ve, b,c,g; 
-		real vf, n, m ;
+		entero ve; 
+		real vf;
 		caracter vc ;
 		booleano vl ;
 
@@ -18,13 +18,13 @@ principal {
 			finvar
 			real funcionC (booleano c1, entero c2){
 				var
-				real x1 ;
+					real x1 ;
 				finvar
 				x1= 1.3 ;
 				si (c2>10)
-				c2= c2-1 ;
+					c2= c2-1 ;
 				sino
-				x1= 3.1 ;
+					x1= 3.1 ;
 				devolver x1 ;
 			}
 			
@@ -42,7 +42,7 @@ principal {
 			finvar
 			
 			caracter funcionE (caracter e1, caracter e2){
-				entrada "enteroroduzca dos caracteres: ", e1, e2 ;
+				entrada "introduzca dos caracteres: ", e1, e2 ;
 				si (e1=='a')
 					devolver e1 ;
 				sino 
@@ -51,7 +51,7 @@ principal {
 					sino
 						devolver ' ';
 			}
-			entrada "enteroroduzca un valor entero: ", valor ;
+			entrada "Introduzca un valor entero: ", valor ;
 		
 			si (d1>0.0){
 				var
@@ -69,9 +69,9 @@ principal {
 			devolver d1 ;
 		}
 
-		devolver d2;
+		x1=0;
 	}
 
-b=0;
+vf=0;
 
 }

@@ -48,7 +48,7 @@
 
 %%
 
-programa : MAIN bloque  ;
+programa : MAIN {decSubprog = 1;} bloque {decSubprog = 0;};
 
 bloque : INICIO_BLOQUE {insertarMarca();}
          declar_de_variables_locales
@@ -60,7 +60,7 @@ bloque : INICIO_BLOQUE {insertarMarca();}
 declar_de_subprogs : declar_de_subprogs declar_subprog
                    | ;
                      
-declar_subprog : cabecera_subprog bloque ;
+declar_subprog : {decSubprog = 1;} cabecera_subprog bloque {decSubprog = 0;};
 
 declar_de_variables_locales : INI_DECLARACION {decVar = 1;}
                               variables_locales
@@ -98,12 +98,20 @@ sentencia : bloque
           | sentencia_hacer_hasta 
           |error;
 
-sentencia_asignacion : identificador ASIGNACION expresion PUN_COMA {if($1.tipo != $3.tipo) printf("ERROR en la sentencia de asignacion tipo1%d  tipo2%d\n",$1.tipo,$2.tipo);};	 
+sentencia_asignacion : identificador ASIGNACION expresion PUN_COMA {
+    if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido))){ 
+        yyerror();
+        printf("ERROR en la sentencia de asignacion \n");}};	 
                     
-sentencia_si : SI PAR_IZQ expresion PAR_DER sentencia {if($3.tipo != booleano) printf("ERROR en la sentencia si \n");}
-             | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia {if($3.tipo != booleano) printf("ERROR en la sentencia si-sino \n");};
+sentencia_si : SI PAR_IZQ expresion PAR_DER sentencia {
+            if($3.tipo != booleano){ 
+                yyerror(); 
+                printf("ERROR en la sentencia si \n"); 
+            }
+            };
+             | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia {if($3.tipo != booleano){ yyerror(); printf("ERROR en la sentencia si-sino \n"); }};
              
-sentencia_mientras : MIENTRAS PAR_IZQ expresion PAR_DER sentencia {if($3.tipo != booleano) printf("ERROR en la sentencia mientras \n");};
+sentencia_mientras : MIENTRAS PAR_IZQ expresion PAR_DER sentencia {if($3.tipo != booleano){ yyerror(); printf("ERROR en la sentencia mientras \n");}};
 
 sentencia_entrada : LEER lista_var_cad PUN_COMA ;
 
@@ -122,28 +130,34 @@ lista_exp_cad : lista_exp_cad SEPARADOR exp_cad
 exp_cad : expresion
         | CONST_STRING ;
   
-sentencia_devolver : DEVOLVER expresion PUN_COMA {if($2.tipo != TS[funcion_actual].tipoDato) printf("ERROR en la sentencia devolver \n");};
+sentencia_devolver : DEVOLVER expresion PUN_COMA {if($2.tipo != TS[funcion_actual].tipoDato){ yyerror(); printf(" ERROR en la sentencia devolver \n");}};
 
-sentencia_hacer_hasta : HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA {if($5.tipo != booleano) printf("ERROR en la sentencia hacer-hasta \n");};
+sentencia_hacer_hasta : HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA {if($5.tipo != booleano){ yyerror(); printf("ERROR en la sentencia hacer-hasta \n");}};
                   
 expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo;}
           | UNI_OP expresion {    
                 switch($1.atrib){
                     case 0:
-                        if($2.tipo != entero && $2.tipo != real) 
+                        if($2.tipo != entero && $2.tipo != real){
+                            yyerror();
                             printf("Error. Tipos no compatibles en expresion Unaria\n");
+                        }                            
                         else
                             $$.tipo = $2.tipo;
                     break;
                     case 1:
-                        if($2.tipo != entero && $2.tipo != real) 
+                        if($2.tipo != entero && $2.tipo != real){
+                            yyerror();
                             printf("Error. Tipos no compatibles en expresion Unaria\n");
+                         }
                         else
                             $$.tipo = $2.tipo;                          
                     break;
                     case 2:
-                        if($2.tipo != booleano)  
+                        if($2.tipo != booleano){
+                            yyerror();
                             printf("Error. Tipos no compatibles en expresion Unaria\n");
+                         }                            
                         else
                             $$.tipo = $2.tipo;                          
                     break;
@@ -151,66 +165,84 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo;}
             }  
 
           | SIGNO_BIN_OP expresion %prec UNI_OP {
-                if($2.tipo != entero && $2.tipo != real)
+                if($2.tipo != entero && $2.tipo != real){
+                    yyerror();
                     printf("Error. Tipos no compatibles en expresion Binaria+Unaria\n");
+                 }
                 else
                     $$.tipo = $2.tipo;                  
             }
           | expresion OR_OP expresion {
                 if($1.tipo != $3.tipo){
+                    yyerror();                    
                     printf("Error. Tipos no compatibles en expresion Or\n");
                 }
-                else if ($1.tipo != booleano) 
+                else if ($1.tipo != booleano){ 
+                    yyerror();
                     printf("ERROR. Tipos no compatibles en expresion Or\n");
+                 }
                 else{
                     $$.tipo = booleano;                   
                 }              
           }
           | expresion AND_OP expresion {
                 if($1.tipo != $3.tipo){
+                    yyerror();
                     printf("Error. Tipos no compatibles en expresion And\n");
                 }
-                else if ($1.tipo != booleano) 
-                    printf("ERROR. Tipos no compatibles en expresion And\n");
-                else{
-                    $$.tipo = booleano;                   
-                }              
+                else{ 
+                    if ($1.tipo != booleano){ 
+                        yyerror();
+                        printf("ERROR. Tipos no compatibles en expresion And\n");
+                    }
+                    else{
+                        $$.tipo = booleano;                   
+                    }
+                }                
           }
           | expresion XOR_OP expresion 
           {
                 if($1.tipo != $3.tipo){
+                    yyerror();
                     printf("Error. Tipos no compatibles en expresion Xor\n");
                 }
-                else if ($1.tipo != booleano) 
+                else if ($1.tipo != booleano){
+                    yyerror();
                     printf("ERROR. Tipos no compatibles en expresion Xor\n");
+               }                    
                 else{
                     $$.tipo = booleano;                   
                 }              
           }
           | expresion SIGNO_BIN_OP expresion
-          {if(($1.tipo != $3.tipo) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) 
-                printf("Error. Tipos no compatibles en expresion Binaria\n");
+          {if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
+                yyerror();
+                printf("(Error. Tipos no compatibles en expresion Binaria\n");
+          }                
             else
                 $$.tipo = $1.tipo;
           }
           | expresion MULTIDIV_OP expresion
-          {if(($1.tipo != $3.tipo && ($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) && ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) 
+          {if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
+                yyerror();              
                 printf("Error. Tipos no compatibles en expresion mutiplicacion y div\n");
+          }
             else
                 $$.tipo = $1.tipo;
           }
           | expresion RELATIONAL_OP expresion
-          {if(($1.tipo != $3.tipo) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) 
+          {if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
+                yyerror();
                 printf("Error. Tipos no compatibles en expresion Condicional_numerica\n");
+             }
             else
                 $$.tipo = booleano;
           }
           | expresion EQNEQ_OP expresion {
-              if($1.tipo != $3.tipo){
-                    printf("Error. Tipos no compatibles en expresion Condicional_booleana\n");
+              if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido))){
+                    yyerror();
+                    printf("Error. Tipos no compatibles en expresion Condicional_booleana \n");
                 }
-                else if ($1.tipo != booleano) 
-                    printf("ERROR  Tipos no compatibles en expresion Condicional_booleana\n");
                 else{
                     $$.tipo = booleano;                   
                 } 
@@ -225,27 +257,37 @@ array : IDENTIFICADOR COR_IZQ expresion COR_DER
 
 lista_expresiones : lista_expresiones SEPARADOR expresion 
                   {nParam++;
-                    if(TS[pos_fun+nParam].tipoDato!=$3.tipo)
-                        printf("Error. Parametro de tipo incorrecto \n");                   
+                    if(TS[pos_fun+nParam].tipoDato!=$3.tipo){
+                        yyerror();
+                        printf(" Error. Parametro de tipo incorrecto \n");                   
+                    }
                   }
                   | expresion 
                   {nParam=1 ; 
-                  if(TS[pos_fun+nParam].tipoDato!=$1.tipo)
-                        printf("Error. Parametro de tipo incorrecto  \n");                    
+                  if(TS[pos_fun+nParam].tipoDato!=$1.tipo){
+                        yyerror();
+                        printf("Error. Parametro de tipo incorrecto  \n");
+                        }                    
                   };
 
 llamar_funcion : IDENTIFICADOR PAR_IZQ {entradaTS *id = buscarSimbolo($1.lexema);
-                    if(id == NULL)
-                        printf("funcion no declarada\n");
+                    if(id == NULL){
+                        yyerror();
+                        printf("Funcion no declarada\n");
+                    }
                     else{ pos_fun= buscarPos($1.lexema);}
 				} 
 				lista_expresiones PAR_DER
                 {entradaTS *id = buscarSimbolo($1.lexema);
-                    if(id == NULL)
-                        printf("funcion no declarada\n");
+                    if(id == NULL){
+                        yyerror();
+                        printf("Funcion no declarada\n");
+                        }
                     else{
-                        if((*id).parametros!=nParam)
-                            printf("numero de parametros erroneos\n");
+                        if((*id).parametros!=nParam){
+                            yyerror();
+                            printf(" Numero de parametros erroneos\n");
+                            }
                         else
                             $$.tipo=(*id).tipoDato;
 							
@@ -253,20 +295,22 @@ llamar_funcion : IDENTIFICADOR PAR_IZQ {entradaTS *id = buscarSimbolo($1.lexema)
                 }
                | IDENTIFICADOR PAR_IZQ PAR_DER 
                  {entradaTS *id = buscarSimbolo($1.lexema);
-                    if(id == NULL)
-                        printf("funcion no declarada\n");
+                    if(id == NULL){
+                        yyerror();
+                        printf("Funcion no declarada\n");
+                    } 
                     else{
                         $$.tipo=(*id).tipoDato;
                     }    
                 };
 
-constante_entera : CONST_INT ;
+constante_entera : CONST_INT {$$.tipo=entero;};
 
 constante_booleana : BOOLEANOS {$$.tipo=booleano;};
 
-constante_real : CONST_FLOAT ;
+constante_real : CONST_FLOAT {$$.tipo=real;};
 
-constante_caracter : CONST_CHAR ;
+constante_caracter : CONST_CHAR {$$.tipo=caracter;};
 
 identificador : IDENTIFICADOR {
         if (decVar)
@@ -275,8 +319,12 @@ identificador : IDENTIFICADOR {
             insertarVariable(parametro_formal, $1.lexema, tipo_global);
         else{
             entradaTS *id = buscarSimbolo($1.lexema);
-            if(id == NULL)
-                printf("identificador no declarado\n");
+            if(id == NULL){
+                yyerror();
+                printf("Identificador no declarado %s \n", $1.lexema);
+               
+                 
+            }               
             else{
                 $$.lexema = (*id).nombre;
                 $$.tipo = (*id).tipoDato;
@@ -306,8 +354,8 @@ extern FILE *yyin;
 int yyparse(void);
 //int yywrap();
 
-void yyerror(char* s) {
-    printf("Error: %s, linea:%d\n", s, yylineno);
+void yyerror() {
+    printf("Linea:%d  ", yylineno);
 }
 
 FILE *abrir_entrada(int argc, char **argv){

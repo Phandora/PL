@@ -39,6 +39,7 @@ extern int decVar;             /* Varible control */
 extern int decParam;           /* Variable control */
 extern int nParam;             /* Variable control */
 extern int pos_fun;             /* Variable control */
+extern int decSubprog;          /* Variable control */
 
 typedef struct {
     int atrib ;     /* Atributo del símbolo (si tiene) */
@@ -60,6 +61,5 @@ int buscarPos(char * nombreSim);
 void insertarMarca();
 void updateParam();
 void valores_en_pila();
-
 
 #endif
