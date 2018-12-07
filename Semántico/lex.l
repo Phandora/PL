@@ -63,7 +63,7 @@ otros       .
 "{"             return INICIO_BLOQUE ;
 "}"             return FIN_BLOQUE ;
 {ident}         {yylval.lexema=strdup(yytext); return IDENTIFICADOR ;}
-\n              ;
+\n              {++mylineno;};
 \t              ;
 " "             ;
 {otros}         printf("\n(Linea %d) Error léxico: token %s\n", yylineno, yytext);

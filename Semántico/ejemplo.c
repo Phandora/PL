@@ -55,15 +55,16 @@ principal {
 					sino
 						devolver ' ';
 			}
+
 			entrada "Introduzca un valor entero: ", valor ;
 		
 			si (d1>0.0){
 				var
 					entero dato ;
 				finvar
-			
+
 				dato= 2;
-				dato= valor*20/dato ;
+				dato= valor*20/dato;
 			}
 			sino {
 				valor= valor * 100 ;

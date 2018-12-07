@@ -1,7 +1,7 @@
-State 124 conflicts: 1 shift/reduce
+Estado 127 conflictos: 1 desplazamiento/reducción
 
 
-Grammar
+Gramática
 
     0 $accept: programa $end
 
@@ -15,26 +15,26 @@ Grammar
     5 declar_subprog: cabecera_subprog bloque
 
     6 declar_de_variables_locales: INI_DECLARACION variables_locales FIN_DECLARACION
+    7                            | %empty
 
-    7 variables_locales: variables_locales cuerpo_declar_variables
-    8                  | cuerpo_declar_variables
-    9                  | error
+    8 variables_locales: variables_locales cuerpo_declar_variables
+    9                  | cuerpo_declar_variables
+   10                  | error
 
-   10 cuerpo_declar_variables: TIPO lista_variables PUN_COMA
+   11 cuerpo_declar_variables: TIPO lista_variables PUN_COMA
 
-   11 lista_variables: identificador
-   12                | identificador SEPARADOR lista_variables
+   12 lista_variables: identificador
+   13                | identificador SEPARADOR lista_variables
 
-   13 cabecera_subprog: TIPO IDENTIFICADOR PAR_IZQ lista_parametros PAR_DER
-   14                 | TIPO IDENTIFICADOR PAR_IZQ PAR_DER
+   14 cabecera_subprog: TIPO IDENTIFICADOR PAR_IZQ lista_parametros PAR_DER
+   15                 | TIPO IDENTIFICADOR PAR_IZQ PAR_DER
 
-   15 lista_parametros: lista_parametros SEPARADOR TIPO identificador
-   16                 | TIPO identificador
-   17                 | error
+   16 lista_parametros: lista_parametros SEPARADOR TIPO identificador
+   17                 | TIPO identificador
+   18                 | error
 
-   18 sentencias: sentencias sentencia
-   19           | sentencia
-   20           | error
+   19 sentencias: sentencias sentencia
+   20           | sentencia
 
    21 sentencia: bloque
    22          | sentencia_asignacion
@@ -44,2084 +44,2105 @@ Grammar
    26          | sentencia_salida
    27          | sentencia_devolver
    28          | sentencia_hacer_hasta
+   29          | error
 
-   29 sentencia_asignacion: identificador ASIGNACION expresion
+   30 sentencia_asignacion: identificador ASIGNACION expresion PUN_COMA
 
-   30 sentencia_si: SI PAR_IZQ expresion PAR_DER sentencia
-   31             | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia
+   31 sentencia_si: SI PAR_IZQ expresion PAR_DER sentencia
+   32             | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia
 
-   32 sentencia_mientras: MIENTRAS PAR_IZQ expresion PAR_DER sentencia
+   33 sentencia_mientras: MIENTRAS PAR_IZQ expresion PAR_DER sentencia
 
-   33 sentencia_entrada: LEER lista_variables PUN_COMA
+   34 sentencia_entrada: LEER lista_var_cad PUN_COMA
 
-   34 sentencia_salida: OUT lista_exp_cad PUN_COMA
+   35 lista_var_cad: lista_var_cad SEPARADOR identificador
+   36              | CONST_STRING
+   37              | identificador
 
-   35 lista_exp_cad: lista_expresiones SEPARADOR exp_cad
-   36              | exp_cad
+   38 sentencia_salida: OUT lista_exp_cad PUN_COMA
 
-   37 exp_cad: expresion
-   38        | CONST_STRING
+   39 lista_exp_cad: lista_exp_cad SEPARADOR exp_cad
+   40              | exp_cad
 
-   39 sentencia_devolver: DEVOLVER expresion PUN_COMA
+   41 exp_cad: expresion
+   42        | CONST_STRING
 
-   40 sentencia_hacer_hasta: HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA
+   43 sentencia_devolver: DEVOLVER expresion PUN_COMA
 
-   41 expresion: PAR_IZQ expresion PAR_DER
-   42          | UNI_OP expresion
-   43          | SIGNO_BIN_OP expresion
-   44          | expresion OR_OP expresion
-   45          | expresion AND_OP expresion
-   46          | expresion XOR_OP expresion
-   47          | expresion SIGNO_BIN_OP expresion
-   48          | expresion MULTIDIV_OP expresion
-   49          | expresion RELATIONAL_OP expresion
-   50          | expresion EQNEQ_OP expresion
-   51          | identificador
-   52          | constante
-   53          | llamar_funcion
+   44 sentencia_hacer_hasta: HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA
 
-   54 array: IDENTIFICADOR COR_IZQ expresion COR_DER
-   55      | IDENTIFICADOR COR_IZQ expresion SEPARADOR expresion COR_DER
+   45 expresion: PAR_IZQ expresion PAR_DER
+   46          | UNI_OP expresion
+   47          | SIGNO_BIN_OP expresion
+   48          | expresion OR_OP expresion
+   49          | expresion AND_OP expresion
+   50          | expresion XOR_OP expresion
+   51          | expresion SIGNO_BIN_OP expresion
+   52          | expresion MULTIDIV_OP expresion
+   53          | expresion RELATIONAL_OP expresion
+   54          | expresion EQNEQ_OP expresion
+   55          | identificador
+   56          | constante
+   57          | llamar_funcion
 
-   56 lista_expresiones: lista_expresiones SEPARADOR expresion
-   57                  | expresion
+   58 array: IDENTIFICADOR COR_IZQ expresion COR_DER
+   59      | IDENTIFICADOR COR_IZQ expresion SEPARADOR expresion COR_DER
 
-   58 llamar_funcion: IDENTIFICADOR PAR_IZQ lista_expresiones PAR_DER
-   59               | IDENTIFICADOR PAR_IZQ PAR_DER
+   60 lista_expresiones: lista_expresiones SEPARADOR expresion
+   61                  | expresion
 
-   60 constante_entera: CONST_INT
+   62 llamar_funcion: IDENTIFICADOR PAR_IZQ lista_expresiones PAR_DER
+   63               | IDENTIFICADOR PAR_IZQ PAR_DER
 
-   61 constante_booleana: BOOLEANOS
+   64 constante_entera: CONST_INT
 
-   62 constante_real: CONST_FLOAT
+   65 constante_booleana: BOOLEANOS
 
-   63 constante_caracter: CONST_CHAR
+   66 constante_real: CONST_FLOAT
 
-   64 identificador: IDENTIFICADOR
-   65              | array
+   67 constante_caracter: CONST_CHAR
 
-   66 constante: constante_entera
-   67          | constante_booleana
-   68          | constante_caracter
-   69          | constante_real
-   70          | constante_array
+   68 identificador: IDENTIFICADOR
+   69              | array
 
-   71 constante_array: INICIO_BLOQUE lista_expresiones FIN_BLOQUE
-   72                | INICIO_BLOQUE lista_expresiones PUN_COMA lista_expresiones FIN_BLOQUE
+   70 constante: constante_entera
+   71          | constante_booleana
+   72          | constante_caracter
+   73          | constante_real
+   74          | constante_array
+
+   75 constante_array: INICIO_BLOQUE lista_expresiones FIN_BLOQUE
+   76                | INICIO_BLOQUE lista_expresiones PUN_COMA lista_expresiones FIN_BLOQUE
 
 
-Terminals, with rules where they appear
+Terminales con las reglas donde aparecen
 
 $end (0) 0
-error (256) 9 17 20
+error (256) 10 18 29
 MAIN (258) 1
-INICIO_BLOQUE (259) 2 71 72
-FIN_BLOQUE (260) 2 71 72
-PUN_COMA (261) 10 33 34 39 40 72
-SEPARADOR (262) 12 15 35 55 56
-PAR_IZQ (263) 13 14 30 31 32 40 41 58 59
-PAR_DER (264) 13 14 30 31 32 40 41 58 59
+INICIO_BLOQUE (259) 2 75 76
+FIN_BLOQUE (260) 2 75 76
+PUN_COMA (261) 11 30 34 38 43 44 76
+SEPARADOR (262) 13 16 35 39 59 60
+PAR_IZQ (263) 14 15 31 32 33 44 45 62 63
+PAR_DER (264) 14 15 31 32 33 44 45 62 63
 INI_DECLARACION (265) 6
 FIN_DECLARACION (266) 6
-ASIGNACION (267) 29
-COR_IZQ (268) 54 55
-COR_DER (269) 54 55
-SI (270) 30 31
-SINO (271) 31
-HACER (272) 40
-HASTA (273) 40
-MIENTRAS (274) 32
-DEVOLVER (275) 39
-TIPO (276) 10 13 14 15 16
-LEER (277) 33
-OUT (278) 34
-BOOLEANOS (279) 61
-CONST_INT (280) 60
-CONST_FLOAT (281) 62
-CONST_CHAR (282) 63
-CONST_STRING (283) 38
-IDENTIFICADOR (284) 13 14 54 55 58 59 64
-OR_OP (285) 44
-AND_OP (286) 45
-XOR_OP (287) 46
-EQNEQ_OP (288) 50
-RELATIONAL_OP (289) 49
-SIGNO_BIN_OP (290) 43 47
-MULTIDIV_OP (291) 48
-UNI_OP (292) 42
+ASIGNACION (267) 30
+COR_IZQ (268) 58 59
+COR_DER (269) 58 59
+SI (270) 31 32
+SINO (271) 32
+HACER (272) 44
+HASTA (273) 44
+MIENTRAS (274) 33
+DEVOLVER (275) 43
+TIPO (276) 11 14 15 16 17
+LEER (277) 34
+OUT (278) 38
+BOOLEANOS (279) 65
+CONST_INT (280) 64
+CONST_FLOAT (281) 66
+CONST_CHAR (282) 67
+CONST_STRING (283) 36 42
+IDENTIFICADOR (284) 14 15 58 59 62 63 68
+OR_OP (285) 48
+AND_OP (286) 49
+XOR_OP (287) 50
+EQNEQ_OP (288) 54
+RELATIONAL_OP (289) 53
+SIGNO_BIN_OP (290) 47 51
+MULTIDIV_OP (291) 52
+UNI_OP (292) 46
 
 
-Nonterminals, with rules where they appear
+No terminales con las reglas donde aparecen
 
 $accept (38)
-    on left: 0
+    en la izquierda: 0
 programa (39)
-    on left: 1, on right: 0
+    en la izquierda: 1, en la derecha: 0
 bloque (40)
-    on left: 2, on right: 1 5 21
+    en la izquierda: 2, en la derecha: 1 5 21
 declar_de_subprogs (41)
-    on left: 3 4, on right: 2 3
+    en la izquierda: 3 4, en la derecha: 2 3
 declar_subprog (42)
-    on left: 5, on right: 3
+    en la izquierda: 5, en la derecha: 3
 declar_de_variables_locales (43)
-    on left: 6, on right: 2
+    en la izquierda: 6 7, en la derecha: 2
 variables_locales (44)
-    on left: 7 8 9, on right: 6 7
+    en la izquierda: 8 9 10, en la derecha: 6 8
 cuerpo_declar_variables (45)
-    on left: 10, on right: 7 8
+    en la izquierda: 11, en la derecha: 8 9
 lista_variables (46)
-    on left: 11 12, on right: 10 12 33
+    en la izquierda: 12 13, en la derecha: 11 13
 cabecera_subprog (47)
-    on left: 13 14, on right: 5
+    en la izquierda: 14 15, en la derecha: 5
 lista_parametros (48)
-    on left: 15 16 17, on right: 13 15
+    en la izquierda: 16 17 18, en la derecha: 14 16
 sentencias (49)
-    on left: 18 19 20, on right: 2 18
+    en la izquierda: 19 20, en la derecha: 2 19
 sentencia (50)
-    on left: 21 22 23 24 25 26 27 28, on right: 18 19 30 31 32 40
+    en la izquierda: 21 22 23 24 25 26 27 28 29, en la derecha: 19
+    20 31 32 33 44
 sentencia_asignacion (51)
-    on left: 29, on right: 22
+    en la izquierda: 30, en la derecha: 22
 sentencia_si (52)
-    on left: 30 31, on right: 23
+    en la izquierda: 31 32, en la derecha: 23
 sentencia_mientras (53)
-    on left: 32, on right: 24
+    en la izquierda: 33, en la derecha: 24
 sentencia_entrada (54)
-    on left: 33, on right: 25
-sentencia_salida (55)
-    on left: 34, on right: 26
-lista_exp_cad (56)
-    on left: 35 36, on right: 34
-exp_cad (57)
-    on left: 37 38, on right: 35 36
-sentencia_devolver (58)
-    on left: 39, on right: 27
-sentencia_hacer_hasta (59)
-    on left: 40, on right: 28
-expresion (60)
-    on left: 41 42 43 44 45 46 47 48 49 50 51 52 53, on right: 29 30
-    31 32 37 39 40 41 42 43 44 45 46 47 48 49 50 54 55 56 57
-array (61)
-    on left: 54 55, on right: 65
-lista_expresiones (62)
-    on left: 56 57, on right: 35 56 58 71 72
-llamar_funcion (63)
-    on left: 58 59, on right: 53
-constante_entera (64)
-    on left: 60, on right: 66
-constante_booleana (65)
-    on left: 61, on right: 67
-constante_real (66)
-    on left: 62, on right: 69
-constante_caracter (67)
-    on left: 63, on right: 68
-identificador (68)
-    on left: 64 65, on right: 11 12 15 16 29 51
-constante (69)
-    on left: 66 67 68 69 70, on right: 52
-constante_array (70)
-    on left: 71 72, on right: 70
+    en la izquierda: 34, en la derecha: 25
+lista_var_cad (55)
+    en la izquierda: 35 36 37, en la derecha: 34 35
+sentencia_salida (56)
+    en la izquierda: 38, en la derecha: 26
+lista_exp_cad (57)
+    en la izquierda: 39 40, en la derecha: 38 39
+exp_cad (58)
+    en la izquierda: 41 42, en la derecha: 39 40
+sentencia_devolver (59)
+    en la izquierda: 43, en la derecha: 27
+sentencia_hacer_hasta (60)
+    en la izquierda: 44, en la derecha: 28
+expresion (61)
+    en la izquierda: 45 46 47 48 49 50 51 52 53 54 55 56 57, en la derecha:
+    30 31 32 33 41 43 44 45 46 47 48 49 50 51 52 53 54 58 59 60 61
+array (62)
+    en la izquierda: 58 59, en la derecha: 69
+lista_expresiones (63)
+    en la izquierda: 60 61, en la derecha: 60 62 75 76
+llamar_funcion (64)
+    en la izquierda: 62 63, en la derecha: 57
+constante_entera (65)
+    en la izquierda: 64, en la derecha: 70
+constante_booleana (66)
+    en la izquierda: 65, en la derecha: 71
+constante_real (67)
+    en la izquierda: 66, en la derecha: 73
+constante_caracter (68)
+    en la izquierda: 67, en la derecha: 72
+identificador (69)
+    en la izquierda: 68 69, en la derecha: 12 13 16 17 30 35 37 55
+constante (70)
+    en la izquierda: 70 71 72 73 74, en la derecha: 56
+constante_array (71)
+    en la izquierda: 75 76, en la derecha: 74
 
 
-State 0
+Estado 0
 
     0 $accept: . programa $end
 
-    MAIN  shift, and go to state 1
+    MAIN  desplazar e ir al estado 1
 
-    programa  go to state 2
+    programa  ir al estado 2
 
 
-State 1
+Estado 1
 
     1 programa: MAIN . bloque
 
-    INICIO_BLOQUE  shift, and go to state 3
+    INICIO_BLOQUE  desplazar e ir al estado 3
 
-    bloque  go to state 4
+    bloque  ir al estado 4
 
 
-State 2
+Estado 2
 
     0 $accept: programa . $end
 
-    $end  shift, and go to state 5
+    $end  desplazar e ir al estado 5
 
 
-State 3
+Estado 3
 
     2 bloque: INICIO_BLOQUE . declar_de_variables_locales declar_de_subprogs sentencias FIN_BLOQUE
 
-    INI_DECLARACION  shift, and go to state 6
+    INI_DECLARACION  desplazar e ir al estado 6
 
-    declar_de_variables_locales  go to state 7
+    $default  reduce usando la regla 7 (declar_de_variables_locales)
+
+    declar_de_variables_locales  ir al estado 7
 
 
-State 4
+Estado 4
 
     1 programa: MAIN bloque .
 
-    $default  reduce using rule 1 (programa)
+    $default  reduce usando la regla 1 (programa)
 
 
-State 5
+Estado 5
 
     0 $accept: programa $end .
 
-    $default  accept
+    $default  aceptar
 
 
-State 6
+Estado 6
 
     6 declar_de_variables_locales: INI_DECLARACION . variables_locales FIN_DECLARACION
 
-    error  shift, and go to state 8
-    TIPO   shift, and go to state 9
+    error  desplazar e ir al estado 8
+    TIPO   desplazar e ir al estado 9
 
-    variables_locales        go to state 10
-    cuerpo_declar_variables  go to state 11
+    variables_locales        ir al estado 10
+    cuerpo_declar_variables  ir al estado 11
 
 
-State 7
+Estado 7
 
     2 bloque: INICIO_BLOQUE declar_de_variables_locales . declar_de_subprogs sentencias FIN_BLOQUE
 
-    $default  reduce using rule 4 (declar_de_subprogs)
+    $default  reduce usando la regla 4 (declar_de_subprogs)
 
-    declar_de_subprogs  go to state 12
-
-
-State 8
-
-    9 variables_locales: error .
-
-    $default  reduce using rule 9 (variables_locales)
+    declar_de_subprogs  ir al estado 12
 
 
-State 9
+Estado 8
 
-   10 cuerpo_declar_variables: TIPO . lista_variables PUN_COMA
+   10 variables_locales: error .
 
-    IDENTIFICADOR  shift, and go to state 13
-
-    lista_variables  go to state 14
-    array            go to state 15
-    identificador    go to state 16
+    $default  reduce usando la regla 10 (variables_locales)
 
 
-State 10
+Estado 9
+
+   11 cuerpo_declar_variables: TIPO . lista_variables PUN_COMA
+
+    IDENTIFICADOR  desplazar e ir al estado 13
+
+    lista_variables  ir al estado 14
+    array            ir al estado 15
+    identificador    ir al estado 16
+
+
+Estado 10
 
     6 declar_de_variables_locales: INI_DECLARACION variables_locales . FIN_DECLARACION
-    7 variables_locales: variables_locales . cuerpo_declar_variables
+    8 variables_locales: variables_locales . cuerpo_declar_variables
 
-    FIN_DECLARACION  shift, and go to state 17
-    TIPO             shift, and go to state 9
+    FIN_DECLARACION  desplazar e ir al estado 17
+    TIPO             desplazar e ir al estado 9
 
-    cuerpo_declar_variables  go to state 18
-
-
-State 11
-
-    8 variables_locales: cuerpo_declar_variables .
-
-    $default  reduce using rule 8 (variables_locales)
+    cuerpo_declar_variables  ir al estado 18
 
 
-State 12
+Estado 11
+
+    9 variables_locales: cuerpo_declar_variables .
+
+    $default  reduce usando la regla 9 (variables_locales)
+
+
+Estado 12
 
     2 bloque: INICIO_BLOQUE declar_de_variables_locales declar_de_subprogs . sentencias FIN_BLOQUE
     3 declar_de_subprogs: declar_de_subprogs . declar_subprog
 
-    error          shift, and go to state 19
-    INICIO_BLOQUE  shift, and go to state 3
-    SI             shift, and go to state 20
-    HACER          shift, and go to state 21
-    MIENTRAS       shift, and go to state 22
-    DEVOLVER       shift, and go to state 23
-    TIPO           shift, and go to state 24
-    LEER           shift, and go to state 25
-    OUT            shift, and go to state 26
-    IDENTIFICADOR  shift, and go to state 13
+    error          desplazar e ir al estado 19
+    INICIO_BLOQUE  desplazar e ir al estado 3
+    SI             desplazar e ir al estado 20
+    HACER          desplazar e ir al estado 21
+    MIENTRAS       desplazar e ir al estado 22
+    DEVOLVER       desplazar e ir al estado 23
+    TIPO           desplazar e ir al estado 24
+    LEER           desplazar e ir al estado 25
+    OUT            desplazar e ir al estado 26
+    IDENTIFICADOR  desplazar e ir al estado 13
 
-    bloque                 go to state 27
-    declar_subprog         go to state 28
-    cabecera_subprog       go to state 29
-    sentencias             go to state 30
-    sentencia              go to state 31
-    sentencia_asignacion   go to state 32
-    sentencia_si           go to state 33
-    sentencia_mientras     go to state 34
-    sentencia_entrada      go to state 35
-    sentencia_salida       go to state 36
-    sentencia_devolver     go to state 37
-    sentencia_hacer_hasta  go to state 38
-    array                  go to state 15
-    identificador          go to state 39
-
-
-State 13
-
-   54 array: IDENTIFICADOR . COR_IZQ expresion COR_DER
-   55      | IDENTIFICADOR . COR_IZQ expresion SEPARADOR expresion COR_DER
-   64 identificador: IDENTIFICADOR .
-
-    COR_IZQ  shift, and go to state 40
-
-    $default  reduce using rule 64 (identificador)
+    bloque                 ir al estado 27
+    declar_subprog         ir al estado 28
+    cabecera_subprog       ir al estado 29
+    sentencias             ir al estado 30
+    sentencia              ir al estado 31
+    sentencia_asignacion   ir al estado 32
+    sentencia_si           ir al estado 33
+    sentencia_mientras     ir al estado 34
+    sentencia_entrada      ir al estado 35
+    sentencia_salida       ir al estado 36
+    sentencia_devolver     ir al estado 37
+    sentencia_hacer_hasta  ir al estado 38
+    array                  ir al estado 15
+    identificador          ir al estado 39
 
 
-State 14
+Estado 13
 
-   10 cuerpo_declar_variables: TIPO lista_variables . PUN_COMA
+   58 array: IDENTIFICADOR . COR_IZQ expresion COR_DER
+   59      | IDENTIFICADOR . COR_IZQ expresion SEPARADOR expresion COR_DER
+   68 identificador: IDENTIFICADOR .
 
-    PUN_COMA  shift, and go to state 41
+    COR_IZQ  desplazar e ir al estado 40
 
-
-State 15
-
-   65 identificador: array .
-
-    $default  reduce using rule 65 (identificador)
+    $default  reduce usando la regla 68 (identificador)
 
 
-State 16
+Estado 14
 
-   11 lista_variables: identificador .
-   12                | identificador . SEPARADOR lista_variables
+   11 cuerpo_declar_variables: TIPO lista_variables . PUN_COMA
 
-    SEPARADOR  shift, and go to state 42
-
-    $default  reduce using rule 11 (lista_variables)
+    PUN_COMA  desplazar e ir al estado 41
 
 
-State 17
+Estado 15
+
+   69 identificador: array .
+
+    $default  reduce usando la regla 69 (identificador)
+
+
+Estado 16
+
+   12 lista_variables: identificador .
+   13                | identificador . SEPARADOR lista_variables
+
+    SEPARADOR  desplazar e ir al estado 42
+
+    $default  reduce usando la regla 12 (lista_variables)
+
+
+Estado 17
 
     6 declar_de_variables_locales: INI_DECLARACION variables_locales FIN_DECLARACION .
 
-    $default  reduce using rule 6 (declar_de_variables_locales)
+    $default  reduce usando la regla 6 (declar_de_variables_locales)
 
 
-State 18
+Estado 18
 
-    7 variables_locales: variables_locales cuerpo_declar_variables .
+    8 variables_locales: variables_locales cuerpo_declar_variables .
 
-    $default  reduce using rule 7 (variables_locales)
-
-
-State 19
-
-   20 sentencias: error .
-
-    $default  reduce using rule 20 (sentencias)
+    $default  reduce usando la regla 8 (variables_locales)
 
 
-State 20
+Estado 19
 
-   30 sentencia_si: SI . PAR_IZQ expresion PAR_DER sentencia
-   31             | SI . PAR_IZQ expresion PAR_DER sentencia SINO sentencia
+   29 sentencia: error .
 
-    PAR_IZQ  shift, and go to state 43
-
-
-State 21
-
-   40 sentencia_hacer_hasta: HACER . sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA
-
-    INICIO_BLOQUE  shift, and go to state 3
-    SI             shift, and go to state 20
-    HACER          shift, and go to state 21
-    MIENTRAS       shift, and go to state 22
-    DEVOLVER       shift, and go to state 23
-    LEER           shift, and go to state 25
-    OUT            shift, and go to state 26
-    IDENTIFICADOR  shift, and go to state 13
-
-    bloque                 go to state 27
-    sentencia              go to state 44
-    sentencia_asignacion   go to state 32
-    sentencia_si           go to state 33
-    sentencia_mientras     go to state 34
-    sentencia_entrada      go to state 35
-    sentencia_salida       go to state 36
-    sentencia_devolver     go to state 37
-    sentencia_hacer_hasta  go to state 38
-    array                  go to state 15
-    identificador          go to state 39
+    $default  reduce usando la regla 29 (sentencia)
 
 
-State 22
+Estado 20
 
-   32 sentencia_mientras: MIENTRAS . PAR_IZQ expresion PAR_DER sentencia
+   31 sentencia_si: SI . PAR_IZQ expresion PAR_DER sentencia
+   32             | SI . PAR_IZQ expresion PAR_DER sentencia SINO sentencia
 
-    PAR_IZQ  shift, and go to state 45
-
-
-State 23
-
-   39 sentencia_devolver: DEVOLVER . expresion PUN_COMA
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 55
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
+    PAR_IZQ  desplazar e ir al estado 43
 
 
-State 24
+Estado 21
 
-   13 cabecera_subprog: TIPO . IDENTIFICADOR PAR_IZQ lista_parametros PAR_DER
-   14                 | TIPO . IDENTIFICADOR PAR_IZQ PAR_DER
+   44 sentencia_hacer_hasta: HACER . sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA
 
-    IDENTIFICADOR  shift, and go to state 64
+    error          desplazar e ir al estado 19
+    INICIO_BLOQUE  desplazar e ir al estado 3
+    SI             desplazar e ir al estado 20
+    HACER          desplazar e ir al estado 21
+    MIENTRAS       desplazar e ir al estado 22
+    DEVOLVER       desplazar e ir al estado 23
+    LEER           desplazar e ir al estado 25
+    OUT            desplazar e ir al estado 26
+    IDENTIFICADOR  desplazar e ir al estado 13
 
-
-State 25
-
-   33 sentencia_entrada: LEER . lista_variables PUN_COMA
-
-    IDENTIFICADOR  shift, and go to state 13
-
-    lista_variables  go to state 65
-    array            go to state 15
-    identificador    go to state 16
-
-
-State 26
-
-   34 sentencia_salida: OUT . lista_exp_cad PUN_COMA
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    CONST_STRING   shift, and go to state 66
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    lista_exp_cad       go to state 67
-    exp_cad             go to state 68
-    expresion           go to state 69
-    array               go to state 15
-    lista_expresiones   go to state 70
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
+    bloque                 ir al estado 27
+    sentencia              ir al estado 44
+    sentencia_asignacion   ir al estado 32
+    sentencia_si           ir al estado 33
+    sentencia_mientras     ir al estado 34
+    sentencia_entrada      ir al estado 35
+    sentencia_salida       ir al estado 36
+    sentencia_devolver     ir al estado 37
+    sentencia_hacer_hasta  ir al estado 38
+    array                  ir al estado 15
+    identificador          ir al estado 39
 
 
-State 27
+Estado 22
+
+   33 sentencia_mientras: MIENTRAS . PAR_IZQ expresion PAR_DER sentencia
+
+    PAR_IZQ  desplazar e ir al estado 45
+
+
+Estado 23
+
+   43 sentencia_devolver: DEVOLVER . expresion PUN_COMA
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 55
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 24
+
+   14 cabecera_subprog: TIPO . IDENTIFICADOR PAR_IZQ lista_parametros PAR_DER
+   15                 | TIPO . IDENTIFICADOR PAR_IZQ PAR_DER
+
+    IDENTIFICADOR  desplazar e ir al estado 64
+
+
+Estado 25
+
+   34 sentencia_entrada: LEER . lista_var_cad PUN_COMA
+
+    CONST_STRING   desplazar e ir al estado 65
+    IDENTIFICADOR  desplazar e ir al estado 13
+
+    lista_var_cad  ir al estado 66
+    array          ir al estado 15
+    identificador  ir al estado 67
+
+
+Estado 26
+
+   38 sentencia_salida: OUT . lista_exp_cad PUN_COMA
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    CONST_STRING   desplazar e ir al estado 68
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    lista_exp_cad       ir al estado 69
+    exp_cad             ir al estado 70
+    expresion           ir al estado 71
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 27
 
    21 sentencia: bloque .
 
-    $default  reduce using rule 21 (sentencia)
+    $default  reduce usando la regla 21 (sentencia)
 
 
-State 28
+Estado 28
 
     3 declar_de_subprogs: declar_de_subprogs declar_subprog .
 
-    $default  reduce using rule 3 (declar_de_subprogs)
+    $default  reduce usando la regla 3 (declar_de_subprogs)
 
 
-State 29
+Estado 29
 
     5 declar_subprog: cabecera_subprog . bloque
 
-    INICIO_BLOQUE  shift, and go to state 3
+    INICIO_BLOQUE  desplazar e ir al estado 3
 
-    bloque  go to state 71
+    bloque  ir al estado 72
 
 
-State 30
+Estado 30
 
     2 bloque: INICIO_BLOQUE declar_de_variables_locales declar_de_subprogs sentencias . FIN_BLOQUE
-   18 sentencias: sentencias . sentencia
+   19 sentencias: sentencias . sentencia
 
-    INICIO_BLOQUE  shift, and go to state 3
-    FIN_BLOQUE     shift, and go to state 72
-    SI             shift, and go to state 20
-    HACER          shift, and go to state 21
-    MIENTRAS       shift, and go to state 22
-    DEVOLVER       shift, and go to state 23
-    LEER           shift, and go to state 25
-    OUT            shift, and go to state 26
-    IDENTIFICADOR  shift, and go to state 13
+    error          desplazar e ir al estado 19
+    INICIO_BLOQUE  desplazar e ir al estado 3
+    FIN_BLOQUE     desplazar e ir al estado 73
+    SI             desplazar e ir al estado 20
+    HACER          desplazar e ir al estado 21
+    MIENTRAS       desplazar e ir al estado 22
+    DEVOLVER       desplazar e ir al estado 23
+    LEER           desplazar e ir al estado 25
+    OUT            desplazar e ir al estado 26
+    IDENTIFICADOR  desplazar e ir al estado 13
 
-    bloque                 go to state 27
-    sentencia              go to state 73
-    sentencia_asignacion   go to state 32
-    sentencia_si           go to state 33
-    sentencia_mientras     go to state 34
-    sentencia_entrada      go to state 35
-    sentencia_salida       go to state 36
-    sentencia_devolver     go to state 37
-    sentencia_hacer_hasta  go to state 38
-    array                  go to state 15
-    identificador          go to state 39
-
-
-State 31
-
-   19 sentencias: sentencia .
-
-    $default  reduce using rule 19 (sentencias)
+    bloque                 ir al estado 27
+    sentencia              ir al estado 74
+    sentencia_asignacion   ir al estado 32
+    sentencia_si           ir al estado 33
+    sentencia_mientras     ir al estado 34
+    sentencia_entrada      ir al estado 35
+    sentencia_salida       ir al estado 36
+    sentencia_devolver     ir al estado 37
+    sentencia_hacer_hasta  ir al estado 38
+    array                  ir al estado 15
+    identificador          ir al estado 39
 
 
-State 32
+Estado 31
+
+   20 sentencias: sentencia .
+
+    $default  reduce usando la regla 20 (sentencias)
+
+
+Estado 32
 
    22 sentencia: sentencia_asignacion .
 
-    $default  reduce using rule 22 (sentencia)
+    $default  reduce usando la regla 22 (sentencia)
 
 
-State 33
+Estado 33
 
    23 sentencia: sentencia_si .
 
-    $default  reduce using rule 23 (sentencia)
+    $default  reduce usando la regla 23 (sentencia)
 
 
-State 34
+Estado 34
 
    24 sentencia: sentencia_mientras .
 
-    $default  reduce using rule 24 (sentencia)
+    $default  reduce usando la regla 24 (sentencia)
 
 
-State 35
+Estado 35
 
    25 sentencia: sentencia_entrada .
 
-    $default  reduce using rule 25 (sentencia)
+    $default  reduce usando la regla 25 (sentencia)
 
 
-State 36
+Estado 36
 
    26 sentencia: sentencia_salida .
 
-    $default  reduce using rule 26 (sentencia)
+    $default  reduce usando la regla 26 (sentencia)
 
 
-State 37
+Estado 37
 
    27 sentencia: sentencia_devolver .
 
-    $default  reduce using rule 27 (sentencia)
+    $default  reduce usando la regla 27 (sentencia)
 
 
-State 38
+Estado 38
 
    28 sentencia: sentencia_hacer_hasta .
 
-    $default  reduce using rule 28 (sentencia)
+    $default  reduce usando la regla 28 (sentencia)
 
 
-State 39
+Estado 39
 
-   29 sentencia_asignacion: identificador . ASIGNACION expresion
+   30 sentencia_asignacion: identificador . ASIGNACION expresion PUN_COMA
 
-    ASIGNACION  shift, and go to state 74
+    ASIGNACION  desplazar e ir al estado 75
 
 
-State 40
+Estado 40
 
-   54 array: IDENTIFICADOR COR_IZQ . expresion COR_DER
-   55      | IDENTIFICADOR COR_IZQ . expresion SEPARADOR expresion COR_DER
+   58 array: IDENTIFICADOR COR_IZQ . expresion COR_DER
+   59      | IDENTIFICADOR COR_IZQ . expresion SEPARADOR expresion COR_DER
 
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
 
-    expresion           go to state 75
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
+    expresion           ir al estado 76
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
 
 
-State 41
+Estado 41
 
-   10 cuerpo_declar_variables: TIPO lista_variables PUN_COMA .
+   11 cuerpo_declar_variables: TIPO lista_variables PUN_COMA .
 
-    $default  reduce using rule 10 (cuerpo_declar_variables)
+    $default  reduce usando la regla 11 (cuerpo_declar_variables)
 
 
-State 42
+Estado 42
 
-   12 lista_variables: identificador SEPARADOR . lista_variables
+   13 lista_variables: identificador SEPARADOR . lista_variables
 
-    IDENTIFICADOR  shift, and go to state 13
+    IDENTIFICADOR  desplazar e ir al estado 13
 
-    lista_variables  go to state 76
-    array            go to state 15
-    identificador    go to state 16
+    lista_variables  ir al estado 77
+    array            ir al estado 15
+    identificador    ir al estado 16
 
 
-State 43
+Estado 43
 
-   30 sentencia_si: SI PAR_IZQ . expresion PAR_DER sentencia
-   31             | SI PAR_IZQ . expresion PAR_DER sentencia SINO sentencia
+   31 sentencia_si: SI PAR_IZQ . expresion PAR_DER sentencia
+   32             | SI PAR_IZQ . expresion PAR_DER sentencia SINO sentencia
 
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
 
-    expresion           go to state 77
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
+    expresion           ir al estado 78
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
 
 
-State 44
+Estado 44
 
-   40 sentencia_hacer_hasta: HACER sentencia . HASTA PAR_IZQ expresion PAR_DER PUN_COMA
+   44 sentencia_hacer_hasta: HACER sentencia . HASTA PAR_IZQ expresion PAR_DER PUN_COMA
 
-    HASTA  shift, and go to state 78
+    HASTA  desplazar e ir al estado 79
 
 
-State 45
+Estado 45
 
-   32 sentencia_mientras: MIENTRAS PAR_IZQ . expresion PAR_DER sentencia
+   33 sentencia_mientras: MIENTRAS PAR_IZQ . expresion PAR_DER sentencia
 
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
 
-    expresion           go to state 79
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
+    expresion           ir al estado 80
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
 
 
-State 46
+Estado 46
 
-   71 constante_array: INICIO_BLOQUE . lista_expresiones FIN_BLOQUE
-   72                | INICIO_BLOQUE . lista_expresiones PUN_COMA lista_expresiones FIN_BLOQUE
+   75 constante_array: INICIO_BLOQUE . lista_expresiones FIN_BLOQUE
+   76                | INICIO_BLOQUE . lista_expresiones PUN_COMA lista_expresiones FIN_BLOQUE
 
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
 
-    expresion           go to state 80
-    array               go to state 15
-    lista_expresiones   go to state 81
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
+    expresion           ir al estado 81
+    array               ir al estado 15
+    lista_expresiones   ir al estado 82
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
 
 
-State 47
+Estado 47
 
-   41 expresion: PAR_IZQ . expresion PAR_DER
+   45 expresion: PAR_IZQ . expresion PAR_DER
 
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
 
-    expresion           go to state 82
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
+    expresion           ir al estado 83
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
 
 
-State 48
+Estado 48
 
-   61 constante_booleana: BOOLEANOS .
+   65 constante_booleana: BOOLEANOS .
 
-    $default  reduce using rule 61 (constante_booleana)
+    $default  reduce usando la regla 65 (constante_booleana)
 
 
-State 49
+Estado 49
 
-   60 constante_entera: CONST_INT .
+   64 constante_entera: CONST_INT .
 
-    $default  reduce using rule 60 (constante_entera)
+    $default  reduce usando la regla 64 (constante_entera)
 
 
-State 50
+Estado 50
 
-   62 constante_real: CONST_FLOAT .
+   66 constante_real: CONST_FLOAT .
 
-    $default  reduce using rule 62 (constante_real)
+    $default  reduce usando la regla 66 (constante_real)
 
 
-State 51
+Estado 51
 
-   63 constante_caracter: CONST_CHAR .
+   67 constante_caracter: CONST_CHAR .
 
-    $default  reduce using rule 63 (constante_caracter)
+    $default  reduce usando la regla 67 (constante_caracter)
 
 
-State 52
+Estado 52
 
-   54 array: IDENTIFICADOR . COR_IZQ expresion COR_DER
-   55      | IDENTIFICADOR . COR_IZQ expresion SEPARADOR expresion COR_DER
-   58 llamar_funcion: IDENTIFICADOR . PAR_IZQ lista_expresiones PAR_DER
-   59               | IDENTIFICADOR . PAR_IZQ PAR_DER
-   64 identificador: IDENTIFICADOR .
+   58 array: IDENTIFICADOR . COR_IZQ expresion COR_DER
+   59      | IDENTIFICADOR . COR_IZQ expresion SEPARADOR expresion COR_DER
+   62 llamar_funcion: IDENTIFICADOR . PAR_IZQ lista_expresiones PAR_DER
+   63               | IDENTIFICADOR . PAR_IZQ PAR_DER
+   68 identificador: IDENTIFICADOR .
 
-    PAR_IZQ  shift, and go to state 83
-    COR_IZQ  shift, and go to state 40
+    PAR_IZQ  desplazar e ir al estado 84
+    COR_IZQ  desplazar e ir al estado 40
 
-    $default  reduce using rule 64 (identificador)
+    $default  reduce usando la regla 68 (identificador)
 
 
-State 53
+Estado 53
 
-   43 expresion: SIGNO_BIN_OP . expresion
+   47 expresion: SIGNO_BIN_OP . expresion
 
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
 
-    expresion           go to state 84
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
+    expresion           ir al estado 85
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
 
 
-State 54
+Estado 54
 
-   42 expresion: UNI_OP . expresion
+   46 expresion: UNI_OP . expresion
 
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
 
-    expresion           go to state 85
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
+    expresion           ir al estado 86
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
 
 
-State 55
+Estado 55
 
-   39 sentencia_devolver: DEVOLVER expresion . PUN_COMA
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
+   43 sentencia_devolver: DEVOLVER expresion . PUN_COMA
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
 
-    PUN_COMA       shift, and go to state 86
-    OR_OP          shift, and go to state 87
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
+    PUN_COMA       desplazar e ir al estado 87
+    OR_OP          desplazar e ir al estado 88
+    AND_OP         desplazar e ir al estado 89
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
 
 
-State 56
+Estado 56
 
-   53 expresion: llamar_funcion .
+   57 expresion: llamar_funcion .
 
-    $default  reduce using rule 53 (expresion)
+    $default  reduce usando la regla 57 (expresion)
 
 
-State 57
+Estado 57
 
-   66 constante: constante_entera .
+   70 constante: constante_entera .
 
-    $default  reduce using rule 66 (constante)
+    $default  reduce usando la regla 70 (constante)
 
 
-State 58
+Estado 58
 
-   67 constante: constante_booleana .
+   71 constante: constante_booleana .
 
-    $default  reduce using rule 67 (constante)
+    $default  reduce usando la regla 71 (constante)
 
 
-State 59
+Estado 59
 
-   69 constante: constante_real .
+   73 constante: constante_real .
 
-    $default  reduce using rule 69 (constante)
+    $default  reduce usando la regla 73 (constante)
 
 
-State 60
+Estado 60
 
-   68 constante: constante_caracter .
+   72 constante: constante_caracter .
 
-    $default  reduce using rule 68 (constante)
+    $default  reduce usando la regla 72 (constante)
 
 
-State 61
+Estado 61
 
-   51 expresion: identificador .
+   55 expresion: identificador .
 
-    $default  reduce using rule 51 (expresion)
+    $default  reduce usando la regla 55 (expresion)
 
 
-State 62
+Estado 62
 
-   52 expresion: constante .
+   56 expresion: constante .
 
-    $default  reduce using rule 52 (expresion)
+    $default  reduce usando la regla 56 (expresion)
 
 
-State 63
+Estado 63
 
-   70 constante: constante_array .
+   74 constante: constante_array .
 
-    $default  reduce using rule 70 (constante)
+    $default  reduce usando la regla 74 (constante)
 
 
-State 64
+Estado 64
 
-   13 cabecera_subprog: TIPO IDENTIFICADOR . PAR_IZQ lista_parametros PAR_DER
-   14                 | TIPO IDENTIFICADOR . PAR_IZQ PAR_DER
+   14 cabecera_subprog: TIPO IDENTIFICADOR . PAR_IZQ lista_parametros PAR_DER
+   15                 | TIPO IDENTIFICADOR . PAR_IZQ PAR_DER
 
-    PAR_IZQ  shift, and go to state 94
+    PAR_IZQ  desplazar e ir al estado 95
 
 
-State 65
+Estado 65
 
-   33 sentencia_entrada: LEER lista_variables . PUN_COMA
+   36 lista_var_cad: CONST_STRING .
 
-    PUN_COMA  shift, and go to state 95
+    $default  reduce usando la regla 36 (lista_var_cad)
 
 
-State 66
+Estado 66
 
-   38 exp_cad: CONST_STRING .
+   34 sentencia_entrada: LEER lista_var_cad . PUN_COMA
+   35 lista_var_cad: lista_var_cad . SEPARADOR identificador
 
-    $default  reduce using rule 38 (exp_cad)
+    PUN_COMA   desplazar e ir al estado 96
+    SEPARADOR  desplazar e ir al estado 97
 
 
-State 67
+Estado 67
 
-   34 sentencia_salida: OUT lista_exp_cad . PUN_COMA
+   37 lista_var_cad: identificador .
 
-    PUN_COMA  shift, and go to state 96
+    $default  reduce usando la regla 37 (lista_var_cad)
 
 
-State 68
+Estado 68
 
-   36 lista_exp_cad: exp_cad .
+   42 exp_cad: CONST_STRING .
 
-    $default  reduce using rule 36 (lista_exp_cad)
+    $default  reduce usando la regla 42 (exp_cad)
 
 
-State 69
+Estado 69
 
-   37 exp_cad: expresion .
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-   57 lista_expresiones: expresion .
+   38 sentencia_salida: OUT lista_exp_cad . PUN_COMA
+   39 lista_exp_cad: lista_exp_cad . SEPARADOR exp_cad
 
-    OR_OP          shift, and go to state 87
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
+    PUN_COMA   desplazar e ir al estado 98
+    SEPARADOR  desplazar e ir al estado 99
 
-    SEPARADOR  reduce using rule 57 (lista_expresiones)
-    $default   reduce using rule 37 (exp_cad)
 
+Estado 70
 
-State 70
+   40 lista_exp_cad: exp_cad .
 
-   35 lista_exp_cad: lista_expresiones . SEPARADOR exp_cad
-   56 lista_expresiones: lista_expresiones . SEPARADOR expresion
+    $default  reduce usando la regla 40 (lista_exp_cad)
 
-    SEPARADOR  shift, and go to state 97
 
+Estado 71
 
-State 71
+   41 exp_cad: expresion .
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+
+    OR_OP          desplazar e ir al estado 88
+    AND_OP         desplazar e ir al estado 89
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
+
+    $default  reduce usando la regla 41 (exp_cad)
+
+
+Estado 72
 
     5 declar_subprog: cabecera_subprog bloque .
 
-    $default  reduce using rule 5 (declar_subprog)
+    $default  reduce usando la regla 5 (declar_subprog)
 
 
-State 72
+Estado 73
 
     2 bloque: INICIO_BLOQUE declar_de_variables_locales declar_de_subprogs sentencias FIN_BLOQUE .
 
-    $default  reduce using rule 2 (bloque)
+    $default  reduce usando la regla 2 (bloque)
 
 
-State 73
+Estado 74
 
-   18 sentencias: sentencias sentencia .
+   19 sentencias: sentencias sentencia .
 
-    $default  reduce using rule 18 (sentencias)
+    $default  reduce usando la regla 19 (sentencias)
 
 
-State 74
+Estado 75
 
-   29 sentencia_asignacion: identificador ASIGNACION . expresion
+   30 sentencia_asignacion: identificador ASIGNACION . expresion PUN_COMA
 
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
 
-    expresion           go to state 98
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
+    expresion           ir al estado 100
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
 
-State 75
+Estado 76
 
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-   54 array: IDENTIFICADOR COR_IZQ expresion . COR_DER
-   55      | IDENTIFICADOR COR_IZQ expresion . SEPARADOR expresion COR_DER
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+   58 array: IDENTIFICADOR COR_IZQ expresion . COR_DER
+   59      | IDENTIFICADOR COR_IZQ expresion . SEPARADOR expresion COR_DER
 
-    SEPARADOR      shift, and go to state 99
-    COR_DER        shift, and go to state 100
-    OR_OP          shift, and go to state 87
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
+    SEPARADOR      desplazar e ir al estado 101
+    COR_DER        desplazar e ir al estado 102
+    OR_OP          desplazar e ir al estado 88
+    AND_OP         desplazar e ir al estado 89
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
 
 
-State 76
+Estado 77
 
-   12 lista_variables: identificador SEPARADOR lista_variables .
+   13 lista_variables: identificador SEPARADOR lista_variables .
 
-    $default  reduce using rule 12 (lista_variables)
+    $default  reduce usando la regla 13 (lista_variables)
 
 
-State 77
+Estado 78
 
-   30 sentencia_si: SI PAR_IZQ expresion . PAR_DER sentencia
-   31             | SI PAR_IZQ expresion . PAR_DER sentencia SINO sentencia
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
+   31 sentencia_si: SI PAR_IZQ expresion . PAR_DER sentencia
+   32             | SI PAR_IZQ expresion . PAR_DER sentencia SINO sentencia
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
 
-    PAR_DER        shift, and go to state 101
-    OR_OP          shift, and go to state 87
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
+    PAR_DER        desplazar e ir al estado 103
+    OR_OP          desplazar e ir al estado 88
+    AND_OP         desplazar e ir al estado 89
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
 
 
-State 78
-
-   40 sentencia_hacer_hasta: HACER sentencia HASTA . PAR_IZQ expresion PAR_DER PUN_COMA
-
-    PAR_IZQ  shift, and go to state 102
-
-
-State 79
-
-   32 sentencia_mientras: MIENTRAS PAR_IZQ expresion . PAR_DER sentencia
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-
-    PAR_DER        shift, and go to state 103
-    OR_OP          shift, and go to state 87
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
-
-
-State 80
-
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-   57 lista_expresiones: expresion .
-
-    OR_OP          shift, and go to state 87
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
-
-    $default  reduce using rule 57 (lista_expresiones)
+Estado 79
+
+   44 sentencia_hacer_hasta: HACER sentencia HASTA . PAR_IZQ expresion PAR_DER PUN_COMA
+
+    PAR_IZQ  desplazar e ir al estado 104
+
+
+Estado 80
+
+   33 sentencia_mientras: MIENTRAS PAR_IZQ expresion . PAR_DER sentencia
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+
+    PAR_DER        desplazar e ir al estado 105
+    OR_OP          desplazar e ir al estado 88
+    AND_OP         desplazar e ir al estado 89
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
+
+
+Estado 81
+
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+   61 lista_expresiones: expresion .
+
+    OR_OP          desplazar e ir al estado 88
+    AND_OP         desplazar e ir al estado 89
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
+
+    $default  reduce usando la regla 61 (lista_expresiones)
 
-
-State 81
+
+Estado 82
 
-   56 lista_expresiones: lista_expresiones . SEPARADOR expresion
-   71 constante_array: INICIO_BLOQUE lista_expresiones . FIN_BLOQUE
-   72                | INICIO_BLOQUE lista_expresiones . PUN_COMA lista_expresiones FIN_BLOQUE
-
-    FIN_BLOQUE  shift, and go to state 104
-    PUN_COMA    shift, and go to state 105
-    SEPARADOR   shift, and go to state 106
-
-
-State 82
-
-   41 expresion: PAR_IZQ expresion . PAR_DER
-   44          | expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-
-    PAR_DER        shift, and go to state 107
-    OR_OP          shift, and go to state 87
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
-
-
-State 83
-
-   58 llamar_funcion: IDENTIFICADOR PAR_IZQ . lista_expresiones PAR_DER
-   59               | IDENTIFICADOR PAR_IZQ . PAR_DER
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    PAR_DER        shift, and go to state 108
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 80
-    array               go to state 15
-    lista_expresiones   go to state 109
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 84
-
-   43 expresion: SIGNO_BIN_OP expresion .
-   44          | expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-
-    $default  reduce using rule 43 (expresion)
-
-
-State 85
-
-   42 expresion: UNI_OP expresion .
-   44          | expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-
-    $default  reduce using rule 42 (expresion)
-
-
-State 86
-
-   39 sentencia_devolver: DEVOLVER expresion PUN_COMA .
-
-    $default  reduce using rule 39 (sentencia_devolver)
-
-
-State 87
-
-   44 expresion: expresion OR_OP . expresion
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 110
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 88
-
-   45 expresion: expresion AND_OP . expresion
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 111
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 89
-
-   46 expresion: expresion XOR_OP . expresion
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 112
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 90
-
-   50 expresion: expresion EQNEQ_OP . expresion
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 113
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 91
-
-   49 expresion: expresion RELATIONAL_OP . expresion
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 114
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 92
-
-   47 expresion: expresion SIGNO_BIN_OP . expresion
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 115
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 93
-
-   48 expresion: expresion MULTIDIV_OP . expresion
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 116
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 94
-
-   13 cabecera_subprog: TIPO IDENTIFICADOR PAR_IZQ . lista_parametros PAR_DER
-   14                 | TIPO IDENTIFICADOR PAR_IZQ . PAR_DER
-
-    error    shift, and go to state 117
-    PAR_DER  shift, and go to state 118
-    TIPO     shift, and go to state 119
-
-    lista_parametros  go to state 120
-
-
-State 95
-
-   33 sentencia_entrada: LEER lista_variables PUN_COMA .
-
-    $default  reduce using rule 33 (sentencia_entrada)
-
-
-State 96
-
-   34 sentencia_salida: OUT lista_exp_cad PUN_COMA .
-
-    $default  reduce using rule 34 (sentencia_salida)
-
-
-State 97
-
-   35 lista_exp_cad: lista_expresiones SEPARADOR . exp_cad
-   56 lista_expresiones: lista_expresiones SEPARADOR . expresion
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    CONST_STRING   shift, and go to state 66
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    exp_cad             go to state 121
-    expresion           go to state 122
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 98
-
-   29 sentencia_asignacion: identificador ASIGNACION expresion .
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-
-    OR_OP          shift, and go to state 87
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
-
-    $default  reduce using rule 29 (sentencia_asignacion)
-
-
-State 99
-
-   55 array: IDENTIFICADOR COR_IZQ expresion SEPARADOR . expresion COR_DER
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 123
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 100
-
-   54 array: IDENTIFICADOR COR_IZQ expresion COR_DER .
-
-    $default  reduce using rule 54 (array)
-
-
-State 101
-
-   30 sentencia_si: SI PAR_IZQ expresion PAR_DER . sentencia
-   31             | SI PAR_IZQ expresion PAR_DER . sentencia SINO sentencia
-
-    INICIO_BLOQUE  shift, and go to state 3
-    SI             shift, and go to state 20
-    HACER          shift, and go to state 21
-    MIENTRAS       shift, and go to state 22
-    DEVOLVER       shift, and go to state 23
-    LEER           shift, and go to state 25
-    OUT            shift, and go to state 26
-    IDENTIFICADOR  shift, and go to state 13
-
-    bloque                 go to state 27
-    sentencia              go to state 124
-    sentencia_asignacion   go to state 32
-    sentencia_si           go to state 33
-    sentencia_mientras     go to state 34
-    sentencia_entrada      go to state 35
-    sentencia_salida       go to state 36
-    sentencia_devolver     go to state 37
-    sentencia_hacer_hasta  go to state 38
-    array                  go to state 15
-    identificador          go to state 39
-
-
-State 102
-
-   40 sentencia_hacer_hasta: HACER sentencia HASTA PAR_IZQ . expresion PAR_DER PUN_COMA
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 125
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 103
-
-   32 sentencia_mientras: MIENTRAS PAR_IZQ expresion PAR_DER . sentencia
-
-    INICIO_BLOQUE  shift, and go to state 3
-    SI             shift, and go to state 20
-    HACER          shift, and go to state 21
-    MIENTRAS       shift, and go to state 22
-    DEVOLVER       shift, and go to state 23
-    LEER           shift, and go to state 25
-    OUT            shift, and go to state 26
-    IDENTIFICADOR  shift, and go to state 13
-
-    bloque                 go to state 27
-    sentencia              go to state 126
-    sentencia_asignacion   go to state 32
-    sentencia_si           go to state 33
-    sentencia_mientras     go to state 34
-    sentencia_entrada      go to state 35
-    sentencia_salida       go to state 36
-    sentencia_devolver     go to state 37
-    sentencia_hacer_hasta  go to state 38
-    array                  go to state 15
-    identificador          go to state 39
-
-
-State 104
-
-   71 constante_array: INICIO_BLOQUE lista_expresiones FIN_BLOQUE .
-
-    $default  reduce using rule 71 (constante_array)
-
-
-State 105
-
-   72 constante_array: INICIO_BLOQUE lista_expresiones PUN_COMA . lista_expresiones FIN_BLOQUE
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 80
-    array               go to state 15
-    lista_expresiones   go to state 127
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 106
-
-   56 lista_expresiones: lista_expresiones SEPARADOR . expresion
-
-    INICIO_BLOQUE  shift, and go to state 46
-    PAR_IZQ        shift, and go to state 47
-    BOOLEANOS      shift, and go to state 48
-    CONST_INT      shift, and go to state 49
-    CONST_FLOAT    shift, and go to state 50
-    CONST_CHAR     shift, and go to state 51
-    IDENTIFICADOR  shift, and go to state 52
-    SIGNO_BIN_OP   shift, and go to state 53
-    UNI_OP         shift, and go to state 54
-
-    expresion           go to state 128
-    array               go to state 15
-    llamar_funcion      go to state 56
-    constante_entera    go to state 57
-    constante_booleana  go to state 58
-    constante_real      go to state 59
-    constante_caracter  go to state 60
-    identificador       go to state 61
-    constante           go to state 62
-    constante_array     go to state 63
-
-
-State 107
-
-   41 expresion: PAR_IZQ expresion PAR_DER .
-
-    $default  reduce using rule 41 (expresion)
-
-
-State 108
-
-   59 llamar_funcion: IDENTIFICADOR PAR_IZQ PAR_DER .
-
-    $default  reduce using rule 59 (llamar_funcion)
-
-
-State 109
-
-   56 lista_expresiones: lista_expresiones . SEPARADOR expresion
-   58 llamar_funcion: IDENTIFICADOR PAR_IZQ lista_expresiones . PAR_DER
-
-    SEPARADOR  shift, and go to state 106
-    PAR_DER    shift, and go to state 129
-
-
-State 110
-
-   44 expresion: expresion . OR_OP expresion
-   44          | expresion OR_OP expresion .
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
-
-    $default  reduce using rule 44 (expresion)
-
-
-State 111
-
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   45          | expresion AND_OP expresion .
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
-
-    $default  reduce using rule 45 (expresion)
+   60 lista_expresiones: lista_expresiones . SEPARADOR expresion
+   75 constante_array: INICIO_BLOQUE lista_expresiones . FIN_BLOQUE
+   76                | INICIO_BLOQUE lista_expresiones . PUN_COMA lista_expresiones FIN_BLOQUE
+
+    FIN_BLOQUE  desplazar e ir al estado 106
+    PUN_COMA    desplazar e ir al estado 107
+    SEPARADOR   desplazar e ir al estado 108
+
+
+Estado 83
+
+   45 expresion: PAR_IZQ expresion . PAR_DER
+   48          | expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+
+    PAR_DER        desplazar e ir al estado 109
+    OR_OP          desplazar e ir al estado 88
+    AND_OP         desplazar e ir al estado 89
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
+
+
+Estado 84
+
+   62 llamar_funcion: IDENTIFICADOR PAR_IZQ . lista_expresiones PAR_DER
+   63               | IDENTIFICADOR PAR_IZQ . PAR_DER
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    PAR_DER        desplazar e ir al estado 110
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 81
+    array               ir al estado 15
+    lista_expresiones   ir al estado 111
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 85
+
+   47 expresion: SIGNO_BIN_OP expresion .
+   48          | expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+
+    $default  reduce usando la regla 47 (expresion)
+
+
+Estado 86
+
+   46 expresion: UNI_OP expresion .
+   48          | expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+
+    $default  reduce usando la regla 46 (expresion)
+
+
+Estado 87
+
+   43 sentencia_devolver: DEVOLVER expresion PUN_COMA .
+
+    $default  reduce usando la regla 43 (sentencia_devolver)
+
+
+Estado 88
+
+   48 expresion: expresion OR_OP . expresion
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 112
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 89
+
+   49 expresion: expresion AND_OP . expresion
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 113
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 90
+
+   50 expresion: expresion XOR_OP . expresion
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 114
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 91
+
+   54 expresion: expresion EQNEQ_OP . expresion
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 115
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 92
+
+   53 expresion: expresion RELATIONAL_OP . expresion
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 116
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 93
+
+   51 expresion: expresion SIGNO_BIN_OP . expresion
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 117
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 94
+
+   52 expresion: expresion MULTIDIV_OP . expresion
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 118
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 95
+
+   14 cabecera_subprog: TIPO IDENTIFICADOR PAR_IZQ . lista_parametros PAR_DER
+   15                 | TIPO IDENTIFICADOR PAR_IZQ . PAR_DER
+
+    error    desplazar e ir al estado 119
+    PAR_DER  desplazar e ir al estado 120
+    TIPO     desplazar e ir al estado 121
+
+    lista_parametros  ir al estado 122
+
+
+Estado 96
+
+   34 sentencia_entrada: LEER lista_var_cad PUN_COMA .
+
+    $default  reduce usando la regla 34 (sentencia_entrada)
+
+
+Estado 97
+
+   35 lista_var_cad: lista_var_cad SEPARADOR . identificador
+
+    IDENTIFICADOR  desplazar e ir al estado 13
+
+    array          ir al estado 15
+    identificador  ir al estado 123
+
+
+Estado 98
+
+   38 sentencia_salida: OUT lista_exp_cad PUN_COMA .
+
+    $default  reduce usando la regla 38 (sentencia_salida)
+
+
+Estado 99
+
+   39 lista_exp_cad: lista_exp_cad SEPARADOR . exp_cad
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    CONST_STRING   desplazar e ir al estado 68
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    exp_cad             ir al estado 124
+    expresion           ir al estado 71
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 100
+
+   30 sentencia_asignacion: identificador ASIGNACION expresion . PUN_COMA
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+
+    PUN_COMA       desplazar e ir al estado 125
+    OR_OP          desplazar e ir al estado 88
+    AND_OP         desplazar e ir al estado 89
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
+
+
+Estado 101
+
+   59 array: IDENTIFICADOR COR_IZQ expresion SEPARADOR . expresion COR_DER
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 126
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 102
+
+   58 array: IDENTIFICADOR COR_IZQ expresion COR_DER .
+
+    $default  reduce usando la regla 58 (array)
+
+
+Estado 103
+
+   31 sentencia_si: SI PAR_IZQ expresion PAR_DER . sentencia
+   32             | SI PAR_IZQ expresion PAR_DER . sentencia SINO sentencia
+
+    error          desplazar e ir al estado 19
+    INICIO_BLOQUE  desplazar e ir al estado 3
+    SI             desplazar e ir al estado 20
+    HACER          desplazar e ir al estado 21
+    MIENTRAS       desplazar e ir al estado 22
+    DEVOLVER       desplazar e ir al estado 23
+    LEER           desplazar e ir al estado 25
+    OUT            desplazar e ir al estado 26
+    IDENTIFICADOR  desplazar e ir al estado 13
+
+    bloque                 ir al estado 27
+    sentencia              ir al estado 127
+    sentencia_asignacion   ir al estado 32
+    sentencia_si           ir al estado 33
+    sentencia_mientras     ir al estado 34
+    sentencia_entrada      ir al estado 35
+    sentencia_salida       ir al estado 36
+    sentencia_devolver     ir al estado 37
+    sentencia_hacer_hasta  ir al estado 38
+    array                  ir al estado 15
+    identificador          ir al estado 39
+
+
+Estado 104
+
+   44 sentencia_hacer_hasta: HACER sentencia HASTA PAR_IZQ . expresion PAR_DER PUN_COMA
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 128
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 105
+
+   33 sentencia_mientras: MIENTRAS PAR_IZQ expresion PAR_DER . sentencia
+
+    error          desplazar e ir al estado 19
+    INICIO_BLOQUE  desplazar e ir al estado 3
+    SI             desplazar e ir al estado 20
+    HACER          desplazar e ir al estado 21
+    MIENTRAS       desplazar e ir al estado 22
+    DEVOLVER       desplazar e ir al estado 23
+    LEER           desplazar e ir al estado 25
+    OUT            desplazar e ir al estado 26
+    IDENTIFICADOR  desplazar e ir al estado 13
+
+    bloque                 ir al estado 27
+    sentencia              ir al estado 129
+    sentencia_asignacion   ir al estado 32
+    sentencia_si           ir al estado 33
+    sentencia_mientras     ir al estado 34
+    sentencia_entrada      ir al estado 35
+    sentencia_salida       ir al estado 36
+    sentencia_devolver     ir al estado 37
+    sentencia_hacer_hasta  ir al estado 38
+    array                  ir al estado 15
+    identificador          ir al estado 39
+
+
+Estado 106
+
+   75 constante_array: INICIO_BLOQUE lista_expresiones FIN_BLOQUE .
+
+    $default  reduce usando la regla 75 (constante_array)
+
+
+Estado 107
+
+   76 constante_array: INICIO_BLOQUE lista_expresiones PUN_COMA . lista_expresiones FIN_BLOQUE
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 81
+    array               ir al estado 15
+    lista_expresiones   ir al estado 130
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 108
+
+   60 lista_expresiones: lista_expresiones SEPARADOR . expresion
+
+    INICIO_BLOQUE  desplazar e ir al estado 46
+    PAR_IZQ        desplazar e ir al estado 47
+    BOOLEANOS      desplazar e ir al estado 48
+    CONST_INT      desplazar e ir al estado 49
+    CONST_FLOAT    desplazar e ir al estado 50
+    CONST_CHAR     desplazar e ir al estado 51
+    IDENTIFICADOR  desplazar e ir al estado 52
+    SIGNO_BIN_OP   desplazar e ir al estado 53
+    UNI_OP         desplazar e ir al estado 54
+
+    expresion           ir al estado 131
+    array               ir al estado 15
+    llamar_funcion      ir al estado 56
+    constante_entera    ir al estado 57
+    constante_booleana  ir al estado 58
+    constante_real      ir al estado 59
+    constante_caracter  ir al estado 60
+    identificador       ir al estado 61
+    constante           ir al estado 62
+    constante_array     ir al estado 63
+
+
+Estado 109
+
+   45 expresion: PAR_IZQ expresion PAR_DER .
+
+    $default  reduce usando la regla 45 (expresion)
+
+
+Estado 110
+
+   63 llamar_funcion: IDENTIFICADOR PAR_IZQ PAR_DER .
+
+    $default  reduce usando la regla 63 (llamar_funcion)
+
+
+Estado 111
+
+   60 lista_expresiones: lista_expresiones . SEPARADOR expresion
+   62 llamar_funcion: IDENTIFICADOR PAR_IZQ lista_expresiones . PAR_DER
+
+    SEPARADOR  desplazar e ir al estado 108
+    PAR_DER    desplazar e ir al estado 132
+
+
+Estado 112
+
+   48 expresion: expresion . OR_OP expresion
+   48          | expresion OR_OP expresion .
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+
+    AND_OP         desplazar e ir al estado 89
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
+
+    $default  reduce usando la regla 48 (expresion)
+
+
+Estado 113
+
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   49          | expresion AND_OP expresion .
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
 
+    $default  reduce usando la regla 49 (expresion)
 
-State 112
 
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   46          | expresion XOR_OP expresion .
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
+Estado 114
 
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   50          | expresion XOR_OP expresion .
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
 
-    $default  reduce using rule 46 (expresion)
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
 
+    $default  reduce usando la regla 50 (expresion)
 
-State 113
 
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-   50          | expresion EQNEQ_OP expresion .
+Estado 115
 
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+   54          | expresion EQNEQ_OP expresion .
 
-    $default  reduce using rule 50 (expresion)
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
 
+    $default  reduce usando la regla 54 (expresion)
 
-State 114
 
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   49          | expresion RELATIONAL_OP expresion .
-   50          | expresion . EQNEQ_OP expresion
+Estado 116
 
-    SIGNO_BIN_OP  shift, and go to state 92
-    MULTIDIV_OP   shift, and go to state 93
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   53          | expresion RELATIONAL_OP expresion .
+   54          | expresion . EQNEQ_OP expresion
 
-    $default  reduce using rule 49 (expresion)
+    SIGNO_BIN_OP  desplazar e ir al estado 93
+    MULTIDIV_OP   desplazar e ir al estado 94
 
+    $default  reduce usando la regla 53 (expresion)
 
-State 115
 
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   47          | expresion SIGNO_BIN_OP expresion .
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
+Estado 117
 
-    MULTIDIV_OP  shift, and go to state 93
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   51          | expresion SIGNO_BIN_OP expresion .
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
 
-    $default  reduce using rule 47 (expresion)
+    MULTIDIV_OP  desplazar e ir al estado 94
 
+    $default  reduce usando la regla 51 (expresion)
 
-State 116
 
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   48          | expresion MULTIDIV_OP expresion .
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
+Estado 118
 
-    $default  reduce using rule 48 (expresion)
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   52          | expresion MULTIDIV_OP expresion .
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
 
+    $default  reduce usando la regla 52 (expresion)
 
-State 117
 
-   17 lista_parametros: error .
+Estado 119
 
-    $default  reduce using rule 17 (lista_parametros)
+   18 lista_parametros: error .
 
+    $default  reduce usando la regla 18 (lista_parametros)
 
-State 118
 
-   14 cabecera_subprog: TIPO IDENTIFICADOR PAR_IZQ PAR_DER .
+Estado 120
 
-    $default  reduce using rule 14 (cabecera_subprog)
+   15 cabecera_subprog: TIPO IDENTIFICADOR PAR_IZQ PAR_DER .
 
+    $default  reduce usando la regla 15 (cabecera_subprog)
 
-State 119
 
-   16 lista_parametros: TIPO . identificador
+Estado 121
 
-    IDENTIFICADOR  shift, and go to state 13
+   17 lista_parametros: TIPO . identificador
 
-    array          go to state 15
-    identificador  go to state 130
+    IDENTIFICADOR  desplazar e ir al estado 13
 
+    array          ir al estado 15
+    identificador  ir al estado 133
 
-State 120
 
-   13 cabecera_subprog: TIPO IDENTIFICADOR PAR_IZQ lista_parametros . PAR_DER
-   15 lista_parametros: lista_parametros . SEPARADOR TIPO identificador
+Estado 122
 
-    SEPARADOR  shift, and go to state 131
-    PAR_DER    shift, and go to state 132
+   14 cabecera_subprog: TIPO IDENTIFICADOR PAR_IZQ lista_parametros . PAR_DER
+   16 lista_parametros: lista_parametros . SEPARADOR TIPO identificador
 
+    SEPARADOR  desplazar e ir al estado 134
+    PAR_DER    desplazar e ir al estado 135
 
-State 121
 
-   35 lista_exp_cad: lista_expresiones SEPARADOR exp_cad .
+Estado 123
 
-    $default  reduce using rule 35 (lista_exp_cad)
+   35 lista_var_cad: lista_var_cad SEPARADOR identificador .
 
+    $default  reduce usando la regla 35 (lista_var_cad)
 
-State 122
 
-   37 exp_cad: expresion .
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-   56 lista_expresiones: lista_expresiones SEPARADOR expresion .
+Estado 124
 
-    OR_OP          shift, and go to state 87
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
+   39 lista_exp_cad: lista_exp_cad SEPARADOR exp_cad .
 
-    SEPARADOR  reduce using rule 56 (lista_expresiones)
-    $default   reduce using rule 37 (exp_cad)
+    $default  reduce usando la regla 39 (lista_exp_cad)
 
 
-State 123
+Estado 125
 
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-   55 array: IDENTIFICADOR COR_IZQ expresion SEPARADOR expresion . COR_DER
+   30 sentencia_asignacion: identificador ASIGNACION expresion PUN_COMA .
 
-    COR_DER        shift, and go to state 133
-    OR_OP          shift, and go to state 87
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
+    $default  reduce usando la regla 30 (sentencia_asignacion)
 
 
-State 124
+Estado 126
 
-   30 sentencia_si: SI PAR_IZQ expresion PAR_DER sentencia .
-   31             | SI PAR_IZQ expresion PAR_DER sentencia . SINO sentencia
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+   59 array: IDENTIFICADOR COR_IZQ expresion SEPARADOR expresion . COR_DER
 
-    SINO  shift, and go to state 134
+    COR_DER        desplazar e ir al estado 136
+    OR_OP          desplazar e ir al estado 88
+    AND_OP         desplazar e ir al estado 89
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
 
-    SINO      [reduce using rule 30 (sentencia_si)]
-    $default  reduce using rule 30 (sentencia_si)
 
+Estado 127
 
-State 125
+   31 sentencia_si: SI PAR_IZQ expresion PAR_DER sentencia .
+   32             | SI PAR_IZQ expresion PAR_DER sentencia . SINO sentencia
 
-   40 sentencia_hacer_hasta: HACER sentencia HASTA PAR_IZQ expresion . PAR_DER PUN_COMA
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
+    SINO  desplazar e ir al estado 137
 
-    PAR_DER        shift, and go to state 135
-    OR_OP          shift, and go to state 87
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
+    SINO      [reduce usando la regla 31 (sentencia_si)]
+    $default  reduce usando la regla 31 (sentencia_si)
 
 
-State 126
+Estado 128
 
-   32 sentencia_mientras: MIENTRAS PAR_IZQ expresion PAR_DER sentencia .
+   44 sentencia_hacer_hasta: HACER sentencia HASTA PAR_IZQ expresion . PAR_DER PUN_COMA
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
 
-    $default  reduce using rule 32 (sentencia_mientras)
+    PAR_DER        desplazar e ir al estado 138
+    OR_OP          desplazar e ir al estado 88
+    AND_OP         desplazar e ir al estado 89
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
 
 
-State 127
+Estado 129
 
-   56 lista_expresiones: lista_expresiones . SEPARADOR expresion
-   72 constante_array: INICIO_BLOQUE lista_expresiones PUN_COMA lista_expresiones . FIN_BLOQUE
+   33 sentencia_mientras: MIENTRAS PAR_IZQ expresion PAR_DER sentencia .
 
-    FIN_BLOQUE  shift, and go to state 136
-    SEPARADOR   shift, and go to state 106
+    $default  reduce usando la regla 33 (sentencia_mientras)
 
 
-State 128
+Estado 130
 
-   44 expresion: expresion . OR_OP expresion
-   45          | expresion . AND_OP expresion
-   46          | expresion . XOR_OP expresion
-   47          | expresion . SIGNO_BIN_OP expresion
-   48          | expresion . MULTIDIV_OP expresion
-   49          | expresion . RELATIONAL_OP expresion
-   50          | expresion . EQNEQ_OP expresion
-   56 lista_expresiones: lista_expresiones SEPARADOR expresion .
+   60 lista_expresiones: lista_expresiones . SEPARADOR expresion
+   76 constante_array: INICIO_BLOQUE lista_expresiones PUN_COMA lista_expresiones . FIN_BLOQUE
 
-    OR_OP          shift, and go to state 87
-    AND_OP         shift, and go to state 88
-    XOR_OP         shift, and go to state 89
-    EQNEQ_OP       shift, and go to state 90
-    RELATIONAL_OP  shift, and go to state 91
-    SIGNO_BIN_OP   shift, and go to state 92
-    MULTIDIV_OP    shift, and go to state 93
+    FIN_BLOQUE  desplazar e ir al estado 139
+    SEPARADOR   desplazar e ir al estado 108
 
-    $default  reduce using rule 56 (lista_expresiones)
 
+Estado 131
 
-State 129
+   48 expresion: expresion . OR_OP expresion
+   49          | expresion . AND_OP expresion
+   50          | expresion . XOR_OP expresion
+   51          | expresion . SIGNO_BIN_OP expresion
+   52          | expresion . MULTIDIV_OP expresion
+   53          | expresion . RELATIONAL_OP expresion
+   54          | expresion . EQNEQ_OP expresion
+   60 lista_expresiones: lista_expresiones SEPARADOR expresion .
 
-   58 llamar_funcion: IDENTIFICADOR PAR_IZQ lista_expresiones PAR_DER .
+    OR_OP          desplazar e ir al estado 88
+    AND_OP         desplazar e ir al estado 89
+    XOR_OP         desplazar e ir al estado 90
+    EQNEQ_OP       desplazar e ir al estado 91
+    RELATIONAL_OP  desplazar e ir al estado 92
+    SIGNO_BIN_OP   desplazar e ir al estado 93
+    MULTIDIV_OP    desplazar e ir al estado 94
 
-    $default  reduce using rule 58 (llamar_funcion)
+    $default  reduce usando la regla 60 (lista_expresiones)
 
 
-State 130
+Estado 132
 
-   16 lista_parametros: TIPO identificador .
+   62 llamar_funcion: IDENTIFICADOR PAR_IZQ lista_expresiones PAR_DER .
 
-    $default  reduce using rule 16 (lista_parametros)
+    $default  reduce usando la regla 62 (llamar_funcion)
 
 
-State 131
+Estado 133
 
-   15 lista_parametros: lista_parametros SEPARADOR . TIPO identificador
+   17 lista_parametros: TIPO identificador .
 
-    TIPO  shift, and go to state 137
+    $default  reduce usando la regla 17 (lista_parametros)
 
 
-State 132
+Estado 134
 
-   13 cabecera_subprog: TIPO IDENTIFICADOR PAR_IZQ lista_parametros PAR_DER .
+   16 lista_parametros: lista_parametros SEPARADOR . TIPO identificador
 
-    $default  reduce using rule 13 (cabecera_subprog)
+    TIPO  desplazar e ir al estado 140
 
 
-State 133
+Estado 135
 
-   55 array: IDENTIFICADOR COR_IZQ expresion SEPARADOR expresion COR_DER .
+   14 cabecera_subprog: TIPO IDENTIFICADOR PAR_IZQ lista_parametros PAR_DER .
 
-    $default  reduce using rule 55 (array)
+    $default  reduce usando la regla 14 (cabecera_subprog)
 
 
-State 134
+Estado 136
 
-   31 sentencia_si: SI PAR_IZQ expresion PAR_DER sentencia SINO . sentencia
+   59 array: IDENTIFICADOR COR_IZQ expresion SEPARADOR expresion COR_DER .
 
-    INICIO_BLOQUE  shift, and go to state 3
-    SI             shift, and go to state 20
-    HACER          shift, and go to state 21
-    MIENTRAS       shift, and go to state 22
-    DEVOLVER       shift, and go to state 23
-    LEER           shift, and go to state 25
-    OUT            shift, and go to state 26
-    IDENTIFICADOR  shift, and go to state 13
+    $default  reduce usando la regla 59 (array)
 
-    bloque                 go to state 27
-    sentencia              go to state 138
-    sentencia_asignacion   go to state 32
-    sentencia_si           go to state 33
-    sentencia_mientras     go to state 34
-    sentencia_entrada      go to state 35
-    sentencia_salida       go to state 36
-    sentencia_devolver     go to state 37
-    sentencia_hacer_hasta  go to state 38
-    array                  go to state 15
-    identificador          go to state 39
 
+Estado 137
 
-State 135
+   32 sentencia_si: SI PAR_IZQ expresion PAR_DER sentencia SINO . sentencia
 
-   40 sentencia_hacer_hasta: HACER sentencia HASTA PAR_IZQ expresion PAR_DER . PUN_COMA
+    error          desplazar e ir al estado 19
+    INICIO_BLOQUE  desplazar e ir al estado 3
+    SI             desplazar e ir al estado 20
+    HACER          desplazar e ir al estado 21
+    MIENTRAS       desplazar e ir al estado 22
+    DEVOLVER       desplazar e ir al estado 23
+    LEER           desplazar e ir al estado 25
+    OUT            desplazar e ir al estado 26
+    IDENTIFICADOR  desplazar e ir al estado 13
 
-    PUN_COMA  shift, and go to state 139
+    bloque                 ir al estado 27
+    sentencia              ir al estado 141
+    sentencia_asignacion   ir al estado 32
+    sentencia_si           ir al estado 33
+    sentencia_mientras     ir al estado 34
+    sentencia_entrada      ir al estado 35
+    sentencia_salida       ir al estado 36
+    sentencia_devolver     ir al estado 37
+    sentencia_hacer_hasta  ir al estado 38
+    array                  ir al estado 15
+    identificador          ir al estado 39
 
 
-State 136
+Estado 138
 
-   72 constante_array: INICIO_BLOQUE lista_expresiones PUN_COMA lista_expresiones FIN_BLOQUE .
+   44 sentencia_hacer_hasta: HACER sentencia HASTA PAR_IZQ expresion PAR_DER . PUN_COMA
 
-    $default  reduce using rule 72 (constante_array)
+    PUN_COMA  desplazar e ir al estado 142
 
 
-State 137
+Estado 139
 
-   15 lista_parametros: lista_parametros SEPARADOR TIPO . identificador
+   76 constante_array: INICIO_BLOQUE lista_expresiones PUN_COMA lista_expresiones FIN_BLOQUE .
 
-    IDENTIFICADOR  shift, and go to state 13
+    $default  reduce usando la regla 76 (constante_array)
 
-    array          go to state 15
-    identificador  go to state 140
 
+Estado 140
 
-State 138
+   16 lista_parametros: lista_parametros SEPARADOR TIPO . identificador
 
-   31 sentencia_si: SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia .
+    IDENTIFICADOR  desplazar e ir al estado 13
 
-    $default  reduce using rule 31 (sentencia_si)
+    array          ir al estado 15
+    identificador  ir al estado 143
 
 
-State 139
+Estado 141
 
-   40 sentencia_hacer_hasta: HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA .
+   32 sentencia_si: SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia .
 
-    $default  reduce using rule 40 (sentencia_hacer_hasta)
+    $default  reduce usando la regla 32 (sentencia_si)
 
 
-State 140
+Estado 142
 
-   15 lista_parametros: lista_parametros SEPARADOR TIPO identificador .
+   44 sentencia_hacer_hasta: HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA .
 
-    $default  reduce using rule 15 (lista_parametros)
+    $default  reduce usando la regla 44 (sentencia_hacer_hasta)
+
+
+Estado 143
+
+   16 lista_parametros: lista_parametros SEPARADOR TIPO identificador .
+
+    $default  reduce usando la regla 16 (lista_parametros)

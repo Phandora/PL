@@ -12,6 +12,7 @@ int decParam = 0;           /* Variable control */
 int nParam = 0;             /* Variable control */
 int pos_fun = 0;             /* Variable control */
 int decSubprog = 0;         /* Variable control */
+int mylineno = 1;
 
 
 void insertarVariable(tipoEntrada entrada, char *name, dtipo type){
@@ -29,10 +30,8 @@ void insertarVariable(tipoEntrada entrada, char *name, dtipo type){
         TOPE++;
      //   printf("Insertar Variable  %s--%d\n",name,type);
     }
-    else{
-        yyerror();
-        
-        printf("Error semántico %s ya declarado\n", name);
+    else{        
+        printf("(Linea %d) Error semántico: %s ya declarado\n", mylineno, name);
     }
 }
 
@@ -119,8 +118,7 @@ void insertarFuncion(char *name, dtipo type, unsigned int param){
 		///printf("Inserto funcion %s\n",name);
     }
     else{
-        yyerror();
-        printf("Error semántico %s ya declarado\n", name);
+        printf("(Linea %d) Error semántico: %s ya declarada\n", mylineno, name);
     }
 }
 
@@ -142,8 +140,7 @@ void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2)
     
     }   
     else{
-        yyerror();
-        printf("Error array %s ya declarado\n",name);
+        printf("(Linea %d) Error semántico: Array %s ya declarado\n", mylineno, name);
     }
 }
 

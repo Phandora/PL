@@ -41,6 +41,8 @@ extern int nParam;             /* Variable control */
 extern int pos_fun;             /* Variable control */
 extern int decSubprog;          /* Variable control */
 
+extern int mylineno;            /* Número de línea para errores semánticos */
+
 typedef struct {
     int atrib ;     /* Atributo del símbolo (si tiene) */
     char *lexema ;  /* Nombre del lexema */

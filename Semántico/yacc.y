@@ -76,8 +76,8 @@ cuerpo_declar_variables : TIPO {tipo_global=$1.tipo;} lista_variables PUN_COMA ;
 lista_variables : identificador
                 | identificador SEPARADOR lista_variables ;
                           
-cabecera_subprog : TIPO IDENTIFICADOR {insertarFuncion($2.lexema, $2.tipo, 0); decParam=1;} PAR_IZQ lista_parametros PAR_DER {decParam = 0;}
-                 | TIPO IDENTIFICADOR {insertarFuncion($2.lexema, $2.tipo, 0);} PAR_IZQ PAR_DER ;
+cabecera_subprog : TIPO IDENTIFICADOR PAR_IZQ {insertarFuncion($2.lexema, $2.tipo, 0); decParam=1;} lista_parametros PAR_DER {decParam = 0;}
+                 | TIPO IDENTIFICADOR PAR_IZQ PAR_DER {insertarFuncion($2.lexema, $2.tipo, 0);};
                  
 lista_parametros : lista_parametros SEPARADOR TIPO {updateParam(); tipo_global = $3.tipo;} identificador
                  | TIPO {updateParam(); tipo_global = $1.tipo;} identificador
@@ -100,18 +100,16 @@ sentencia : bloque
 
 sentencia_asignacion : identificador ASIGNACION expresion PUN_COMA {
     if(($1.dimension != $3.dimension )|| $1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido))){ 
-        yyerror();
-        printf("ERROR en la sentencia de asignacion \n");}};	 
+        printf("\n\n(Linea %d) Error semantico : elementos incompatibles en la asignación.\n", mylineno);}};	 
                     
 sentencia_si : SI PAR_IZQ expresion PAR_DER sentencia {
             if(( $3.dimension !=0 )||$3.tipo != booleano){ 
-                yyerror(); 
-                printf("ERROR en la sentencia si \n"); 
+               printf("\n\n(Linea %d) Error semantico : expresión invalida en la sentencia condicional.\n", mylineno); 
             }
             };
-            | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia {if(( $3.dimension !=0 )||$3.tipo != booleano){ yyerror(); printf("ERROR en la sentencia si-sino \n"); }};
+            | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia {if(( $3.dimension !=0 )||$3.tipo != booleano){ printf("\n\n(Linea %d) Error semantico : expresión invalida en la sentencia condicional.\n", mylineno); }};
              
-sentencia_mientras : MIENTRAS PAR_IZQ expresion PAR_DER sentencia {if(($3.dimension !=0)||$3.tipo != booleano){ yyerror(); printf("ERROR en la sentencia mientras \n");}};
+sentencia_mientras : MIENTRAS PAR_IZQ expresion PAR_DER sentencia {if(($3.dimension !=0)||$3.tipo != booleano){ printf("\n\n(Linea %d) Error semantico : expresión invalida en la sentencia mientras.\n", mylineno); }};
 
 sentencia_entrada : LEER lista_var_cad PUN_COMA ;
 
@@ -130,17 +128,16 @@ lista_exp_cad : lista_exp_cad SEPARADOR exp_cad
 exp_cad : expresion
         | CONST_STRING ;
   
-sentencia_devolver : DEVOLVER expresion PUN_COMA {if((TS[funcion_actual].dimensiones != 0 )||$2.tipo != TS[funcion_actual].tipoDato){ yyerror(); printf(" ERROR en la sentencia devolver  \n");}};
+sentencia_devolver : DEVOLVER expresion PUN_COMA {if((TS[funcion_actual].dimensiones != 0 )||$2.tipo != TS[funcion_actual].tipoDato){ printf("\n\n(Linea %d) Error semantico : tipo devuelto incompatible con la función\n", mylineno); }};
 
-sentencia_hacer_hasta : HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA {if(($5.dimension !=0)||$5.tipo != booleano){ yyerror(); printf("ERROR en la sentencia hacer-hasta \n");}};
+sentencia_hacer_hasta : HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA {if(($5.dimension !=0)||$5.tipo != booleano){ printf("\n\n(Linea %d) Error semantico : expresión invalida en la sentencia hacer hasta.\n", mylineno); }};
                   
 expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dimension; $$.tamadim1  = $2.tamadim1; $$.tamadim2  = $2.tamadim2;}
           | UNI_OP expresion {    
-                switch($1.atrib){
+                switch($2.atrib){
                     case 0:
                         if(($2.dimension !=0)|| $2.tipo != entero && $2.tipo != real){
-                            yyerror();
-                            printf("Error. Tipos no compatibles en expresion Unaria\n");
+                            printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion Unaria\n", mylineno);
                         }                            
                          else{
                             $$.tipo = $2.tipo; 
@@ -151,8 +148,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                     break;
                     case 1:
                         if(($2.dimension !=0)||$2.tipo != entero && $2.tipo != real){
-                            yyerror();
-                            printf("Error. Tipos no compatibles en expresion Unaria\n");
+                            printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion Unaria\n", mylineno);
                          }
                          else{
                             $$.tipo = $2.tipo; 
@@ -163,8 +159,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                     break;
                     case 2:
                         if(($2.dimension !=0)|| $2.tipo != booleano){
-                            yyerror();
-                            printf("Error. Tipos no compatibles en expresion Unaria\n");
+                            printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion Unaria\n", mylineno);
                          }                            
                          else{
                             $$.tipo = $2.tipo; 
@@ -178,8 +173,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
 
           | SIGNO_BIN_OP expresion %prec UNI_OP {
                 if(($2.dimension !=0)||$2.tipo != entero && $2.tipo != real){
-                    yyerror();
-                    printf("Error. Tipos no compatibles en expresion Binaria+Unaria\n");
+                    printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion Unaria\n", mylineno);
                  }
                 else{
                     $$.tipo = $2.tipo; 
@@ -190,12 +184,10 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
             }
           | expresion OR_OP expresion {
                 if(($1.dimension !=0)||($3.dimension !=0)|| $1.tipo != $3.tipo){
-                    yyerror();                    
-                    printf("Error. Tipos no compatibles en expresion Or\n");
+                    printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion OR\n", mylineno);
                 }
                 else if ($1.tipo != booleano){ 
-                    yyerror();
-                    printf("ERROR. Tipos no compatibles en expresion Or\n");
+                    printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion OR\n", mylineno);
                  }
                 else{ 
                     $$.tipo = booleano;
@@ -206,13 +198,11 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
           }
           | expresion AND_OP expresion {
                 if(($1.dimension !=0)||($3.dimension !=0)||$1.tipo != $3.tipo){
-                    yyerror();
-                    printf("Error. Tipos no compatibles en expresion And\n");
+                    printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion AND\n", mylineno);
                 }
                 else{ 
                     if ($1.tipo != booleano){ 
-                        yyerror();
-                        printf("ERROR. Tipos no compatibles en expresion And\n");
+                        printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion AND\n", mylineno);
                     }
                     else{ 
                         $$.tipo = booleano;
@@ -225,12 +215,10 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
           | expresion XOR_OP expresion 
           {
                 if(($1.dimension !=0)||($3.dimension !=0)||$1.tipo != $3.tipo){
-                    yyerror();
-                    printf("Error. Tipos no compatibles en expresion Xor\n");
+                    printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion XOR\n", mylineno);
                 }
                 else if ($1.tipo != booleano){
-                    yyerror();
-                    printf("ERROR. Tipos no compatibles en expresion Xor\n");
+                    printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion XOR\n", mylineno);
                }                    
                 else{ 
                 $$.tipo = booleano;
@@ -241,11 +229,10 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
           }
           | expresion SIGNO_BIN_OP expresion
           {
-            switch($1.atrib){
+            switch($2.atrib){
                 case 0:
                     if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
-                        yyerror();
-                        printf("(Error. Tipos no compatibles en expresion Binaria-Tamaños de arrays\n");
+                        printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion Binaria (%s)\n", mylineno, $2.lexema);
                     }
                     else if(($1.dimension !=$3.dimension)){
                     
@@ -264,8 +251,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                             
                         }
                         else{
-                            yyerror();
-                            printf("Error. Dimensiones no compatibles en expresion Binaria-Tamaños de arrays\n");
+                             printf("\n\n(Linea %d) Error semantico : Dimensiones no compatibles en expresion Binaria (%s) de arrays\n", mylineno, $2.lexema);
                         }
                     }
                     else{
@@ -276,16 +262,14 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                                 $$.tamadim2  = $1.tamadim2;
                         }
                         else{
-                         yyerror();
-                         printf("Error. Tamaños no compatibles en expresion Binaria-Tamaños de arrays\n");
+                          printf("\n\n(Linea %d) Error semantico : Tamaños no compatibles en expresion Binaria (%s) de arrays\n", mylineno, $2.lexema);
                             
                         }
                     }
                     break;
                 case 1:
                     if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
-                        yyerror();
-                        printf("(Error. Tipos no compatibles en expresion Binaria-Tamaños de arrays\n");
+                         printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion Binaria (%s)\n", mylineno, $2.lexema);
                     }
                     else if(($1.dimension !=$3.dimension)){
                         if(($1.dimension !=0 )&&($3.dimension ==0)) {
@@ -296,8 +280,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                             
                         }
                         else{
-                            yyerror();
-                            printf("(Error. Dimensiones no compatibles en expresion Binaria-Tamaños de arrays\n");
+                            printf("\n\n(Linea %d) Error semantico : Dimensiones no compatibles en expresion Binaria (%s) de arrays\n", mylineno, $2.lexema);
                         }
                     }
                     else{
@@ -308,9 +291,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                                 $$.tamadim2  = $1.tamadim2;
                         }
                         else{
-                         yyerror();
-                         printf("Error. Tamaños no compatibles en expresion Binaria-Tamaños de arrays\n");
-                            
+                          printf("\n\n(Linea %d) Error semantico : Tamaños no compatibles en expresion Binaria (%s) de arrays\n", mylineno, $2.lexema);
                         }
                     }
                     break;
@@ -320,11 +301,10 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
           }
           | expresion MULTIDIV_OP expresion
           {
-              switch($1.atrib){
+              switch($2.atrib){
                 case 0:
                     if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
-                        yyerror();
-                        printf("(Error. Tipos no compatibles en expresion Binaria-Tamaños de arrays\n");
+                         printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion Binaria (%s)\n", mylineno, $2.lexema);
                     }
                     else if(($1.dimension !=$3.dimension)){
                     
@@ -343,8 +323,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                             
                         }
                         else{
-                            yyerror();
-                            printf("Error. Dimensiones no compatibles en expresion multiplicacion de arrays\n");
+                             printf("\n\n(Linea %d) Error semantico : Dimensiones no compatibles en expresion Binaria (%s) de arrays\n", mylineno, $2.lexema);
                         }
                     }
                     else{
@@ -355,16 +334,13 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                                 $$.tamadim2  = $1.tamadim2;
                         }
                         else{
-                         yyerror();
-                         printf("Error. Tamaños no compatibles en expresion multiplicacion de arrays\n");
-                            
+                          printf("\n\n(Linea %d) Error semantico : Tamaños no compatibles en expresion Binaria (%s) de arrays\n", mylineno, $2.lexema);
                         }
                     }
                     break;
                 case 1:
                     if(($1.tipo != $3.tipo) && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
-                        yyerror();
-                        printf("(Error. Tipos no compatibles en expresion division de arrays\n");
+                         printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion división de arrays\n", mylineno);
                     }
                     else if(($1.dimension !=$3.dimension)){
                         if(($1.dimension !=0 )&&($3.dimension ==0)) {
@@ -375,8 +351,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                             
                         }
                         else{
-                            yyerror();
-                            printf("(Error. Tipos no compatibles en expresion division de arrays\n");
+                             printf("\n\n(Linea %d) Error semantico : Dimensiones no compatibles en expresion división de arrays\n", mylineno);
                         }
                     }
                     else{
@@ -387,21 +362,16 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                                 $$.tamadim2  = $1.tamadim2;
                         }
                         else{
-                         yyerror();
-                         printf("Error. Tamaños no compatibles en expresion division de arrays\n");
-                            
+                         printf("\n\n(Linea %d) Error semantico : Tamaños no compatibles en expresion división de arrays\n", mylineno);
                         }
                     }
                     break;
                 case 2:
                     if(($1.tipo != $3.tipo) && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
-                        yyerror();
-                        printf("(Error. Tipos no compatibles en expresion multiplicacion matrice de arrays\n");
+                         printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion multiplicacion matrices de arrays\n", mylineno);
                     }
                     else if(($1.dimension !=$3.dimension)){
-                            yyerror();
-                            printf("(Error. Dimension no compatible en expresion multiplicacion de matrices\n");
-                        
+                         printf("\n\n(Linea %d) Error semantico : Dimension no compatible en expresion multiplicacion de matrices\n", mylineno);
                     }
                     else{
                          if ($1.tamadim2 == $3.tamadim1){ //a[1][2]**b[2][3]
@@ -411,9 +381,8 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                                 $$.tamadim2  = $3.tamadim2; //1
                         }
                         else{
-                         yyerror();
-                         printf("Error. Tamaños no compatibles en expresion multiplicacion de matrices\n");
-                            
+                            printf("\n\n(Linea %d) Error semantico : Tamaños no compatibles en expresion multiplicacion de matrices\n", mylineno);
+
                         }                    
                     }
                     break; 
@@ -422,8 +391,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
           }
           | expresion RELATIONAL_OP expresion
           {if(($1.dimension !=0)||($3.dimension !=0)||$1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
-                yyerror();
-                printf("Error. Tipos no compatibles en expresion Condicional_numerica\n");
+                printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion Condicional numerica\n", mylineno);
              }
             else{ 
                 $$.tipo = booleano;
@@ -434,8 +402,8 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
           }
           | expresion EQNEQ_OP expresion {
               if(($1.dimension !=0)||($3.dimension !=0)|| $1.tipo != $3.tipo ){
-                    yyerror();
-                    printf("Error. Tipos no compatibles en expresion Condicional_booleana \n");
+                    printf("\n\n(Linea %d) Error semantico : Tipos no compatibles en expresion Condicional booleana\n", mylineno);
+
                 }
                 else{
                     $$.tipo = booleano;            
@@ -464,8 +432,7 @@ array : IDENTIFICADOR COR_IZQ expresion COR_DER {
     else{
         entradaTS *id = buscarSimbolo($1.lexema,0);
         if(id == NULL){
-            yyerror();
-            printf("Array no declarado %s \n", $1.lexema);
+            printf("\n\n(Linea %d) Error semantico : Array no declarado\n", mylineno);
         }               
         else{
             $$.lexema = (*id).nombre;
@@ -482,8 +449,7 @@ array : IDENTIFICADOR COR_IZQ expresion COR_DER {
     else{
         entradaTS *id = buscarSimbolo($1.lexema,0);
         if(id == NULL){
-            yyerror();
-            printf("Identificador no declarado %s \n", $1.lexema);
+            printf("\n\n(Linea %d) Error semantico : Indentificador no declarado\n", mylineno);
         }               
         else{
             $$.lexema = (*id).nombre;
@@ -498,35 +464,30 @@ array : IDENTIFICADOR COR_IZQ expresion COR_DER {
 lista_expresiones : lista_expresiones SEPARADOR expresion 
                   {nParam++;
                     if(TS[pos_fun+nParam].tipoDato!=$3.tipo){
-                        yyerror();
-                        printf(" Error. Parametro de tipo incorrecto \n");                   
+                        printf("\n\n(Linea %d) Error semantico : %s Parámetro de tipo incorrecto\n", mylineno, $3.lexema);                 
                     }
                   }
                   | expresion 
                   {nParam=1 ; 
                   if(TS[pos_fun+nParam].tipoDato!=$1.tipo){
-                        yyerror();
-                        printf("Error. Parametro de tipo incorrecto  \n");
+                        printf("\n\n(Linea %d) Error semantico : %s Parámetro de tipo incorrecto\n", mylineno, $1.lexema);                 
                         }                    
                   };
 
 llamar_funcion : IDENTIFICADOR PAR_IZQ {entradaTS *id = buscarSimbolo($1.lexema,0);
                     if(id == NULL){
-                        yyerror();
-                        printf("Funcion no declarada\n");
+                        printf("\n\n(Linea %d) Error semantico : Función no declarada\n", mylineno);                 
                     }
                     else{ pos_fun= buscarPos($1.lexema);}
 				} 
 				lista_expresiones PAR_DER
                 {entradaTS *id = buscarSimbolo($1.lexema,0);
                     if(id == NULL){
-                        yyerror();
-                        printf("Funcion no declarada\n");
+                        printf("\n\n(Linea %d) Error semantico : Función no declarada\n", mylineno);                 
                         }
                     else{
                         if((*id).parametros!=nParam){
-                            yyerror();
-                            printf(" Numero de parametros erroneos\n");
+                            printf("\n\n(Linea %d) Error semantico : Número de parámetros erróneos\n", mylineno);                 
                             }
                         else
                             $$.tipo=(*id).tipoDato;
@@ -536,8 +497,7 @@ llamar_funcion : IDENTIFICADOR PAR_IZQ {entradaTS *id = buscarSimbolo($1.lexema,
                | IDENTIFICADOR PAR_IZQ PAR_DER 
                  {entradaTS *id = buscarSimbolo($1.lexema,0);
                     if(id == NULL){
-                        yyerror();
-                        printf("Funcion no declarada\n");
+                        printf("\n\n(Linea %d) Error semantico : Función no declarada\n", mylineno);                 
                     } 
                     else{
                         $$.tipo=(*id).tipoDato;
@@ -560,9 +520,7 @@ identificador : IDENTIFICADOR {
         else{
             entradaTS *id = buscarSimbolo($1.lexema,0);
             if(id == NULL){
-                yyerror();
-                printf("Identificador no declarado %s \n", $1.lexema);
-                 
+                printf("\n\n(Linea %d) Error semantico : Identificador no declarado\n", mylineno);                  
             }               
             else{
                 $$.lexema = (*id).nombre;
@@ -601,8 +559,8 @@ extern FILE *yyin;
 int yyparse(void);
 //int yywrap();
 
-void yyerror() {
-    printf("Linea:%d  ", yylineno);
+void yyerror(char* s) {
+    printf("\n(Linea %d): %s", yylineno, s);
 }
 
 FILE *abrir_entrada(int argc, char **argv){
