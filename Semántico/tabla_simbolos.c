@@ -16,7 +16,7 @@ int decSubprog = 0;         /* Variable control */
 
 void insertarVariable(tipoEntrada entrada, char *name, dtipo type){
    
-    entradaTS *encontrado = buscarSimbolo(name);
+    entradaTS *encontrado = buscarSimbolo(name,1);
     if(encontrado == NULL){
         entradaTS var   =  {.entrada = entrada,
                             .nombre  = name,
@@ -31,7 +31,8 @@ void insertarVariable(tipoEntrada entrada, char *name, dtipo type){
     }
     else{
         yyerror();
-        printf("Error semántico %s ya declarado", name);
+        
+        printf("Error semántico %s ya declarado\n", name);
     }
 }
 
@@ -50,7 +51,7 @@ void insertarMarca(){
     }
     else{
         var.entrada = marca;
-        var.nombre  = "marcaNoSubprog";
+        var.nombre  = "marca"; // "marcaNoSubprog"
         var.tipoDato = desconocido;
         var.parametros = 0;
         var.dimensiones = 0;
@@ -89,8 +90,8 @@ void eliminarBloque(){
         TOPE--;
 	}
 	if(TOPE>0){
-        int pos = buscarPos("marca");
         TOPE--;
+        int pos = buscarPos("marca");
         for ( int i = pos; i >= 0; i--){
             if (TS[i].entrada ==funcion){
                 funcion_actual= i;
@@ -103,7 +104,7 @@ void eliminarBloque(){
 
 void insertarFuncion(char *name, dtipo type, unsigned int param){
    
-    entradaTS *encontrado = buscarSimbolo(name);
+    entradaTS *encontrado = buscarSimbolo(name,1);
     if(encontrado == NULL){
         entradaTS var   =    {.entrada = funcion,
                               .nombre  = name,
@@ -119,13 +120,14 @@ void insertarFuncion(char *name, dtipo type, unsigned int param){
     }
     else{
         yyerror();
-        printf("Error semántico %s ya declarado", name);
+        printf("Error semántico %s ya declarado\n", name);
     }
 }
 
 void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2){
-    
-    entradaTS *encontrado = buscarSimbolo(name);
+     
+   
+    entradaTS *encontrado = buscarSimbolo(name,1);
     if(encontrado == NULL){
         entradaTS var   =    {.entrada = variable,
                             .nombre  = name,
@@ -135,8 +137,9 @@ void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2)
                             .TamDimen1 = dim1,
                             .TamDimen2 = dim2};
         
-        TS[TOPE];
+        TS[TOPE]=var;
         TOPE ++;
+    
     }   
     else{
         yyerror();
@@ -144,11 +147,14 @@ void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2)
     }
 }
 
-entradaTS * buscarSimbolo(char * nombreSim){
+entradaTS * buscarSimbolo(char * nombreSim, int declarar){
     //printf("Busco simbolo %s\n",nombreSim);
-    int pos_marca= buscarPos("marca");  
+    int pos_marca=0;
 
-
+    if(declarar==1)
+        pos_marca= buscarPos("marca");  
+    
+    
     for ( int i = TOPE-1; i >= pos_marca; i--){
         //printf("%d\n",i);
         if (strcmp(TS[i].nombre, nombreSim) == 0){

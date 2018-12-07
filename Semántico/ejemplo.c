@@ -4,9 +4,13 @@ principal {
 		real vf;
 		caracter vc ;
 		booleano vl ;
+		entero a[10,20];
+		entero b[20,40];
+	
 
 	finvar
 	
+
 	entero funcionA (entero a1, real a2, caracter a3){
 		var
 			entero x1, x2 ;
@@ -73,5 +77,6 @@ principal {
 	}
 
 vf=0;
+a=a**b;
 
 }

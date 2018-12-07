@@ -99,19 +99,19 @@ sentencia : bloque
           |error;
 
 sentencia_asignacion : identificador ASIGNACION expresion PUN_COMA {
-    if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido))){ 
+    if(($1.dimension != $3.dimension )|| $1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido))){ 
         yyerror();
         printf("ERROR en la sentencia de asignacion \n");}};	 
                     
 sentencia_si : SI PAR_IZQ expresion PAR_DER sentencia {
-            if($3.tipo != booleano){ 
+            if(( $3.dimension !=0 )||$3.tipo != booleano){ 
                 yyerror(); 
                 printf("ERROR en la sentencia si \n"); 
             }
             };
-             | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia {if($3.tipo != booleano){ yyerror(); printf("ERROR en la sentencia si-sino \n"); }};
+            | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia {if(( $3.dimension !=0 )||$3.tipo != booleano){ yyerror(); printf("ERROR en la sentencia si-sino \n"); }};
              
-sentencia_mientras : MIENTRAS PAR_IZQ expresion PAR_DER sentencia {if($3.tipo != booleano){ yyerror(); printf("ERROR en la sentencia mientras \n");}};
+sentencia_mientras : MIENTRAS PAR_IZQ expresion PAR_DER sentencia {if(($3.dimension !=0)||$3.tipo != booleano){ yyerror(); printf("ERROR en la sentencia mientras \n");}};
 
 sentencia_entrada : LEER lista_var_cad PUN_COMA ;
 
@@ -130,50 +130,66 @@ lista_exp_cad : lista_exp_cad SEPARADOR exp_cad
 exp_cad : expresion
         | CONST_STRING ;
   
-sentencia_devolver : DEVOLVER expresion PUN_COMA {if($2.tipo != TS[funcion_actual].tipoDato){ yyerror(); printf(" ERROR en la sentencia devolver \n");}};
+sentencia_devolver : DEVOLVER expresion PUN_COMA {if((TS[funcion_actual].dimensiones != 0 )||$2.tipo != TS[funcion_actual].tipoDato){ yyerror(); printf(" ERROR en la sentencia devolver  \n");}};
 
-sentencia_hacer_hasta : HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA {if($5.tipo != booleano){ yyerror(); printf("ERROR en la sentencia hacer-hasta \n");}};
+sentencia_hacer_hasta : HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA {if(($5.dimension !=0)||$5.tipo != booleano){ yyerror(); printf("ERROR en la sentencia hacer-hasta \n");}};
                   
-expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo;}
+expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dimension; $$.tamadim1  = $2.tamadim1; $$.tamadim2  = $2.tamadim2;}
           | UNI_OP expresion {    
                 switch($1.atrib){
                     case 0:
-                        if($2.tipo != entero && $2.tipo != real){
+                        if(($2.dimension !=0)|| $2.tipo != entero && $2.tipo != real){
                             yyerror();
                             printf("Error. Tipos no compatibles en expresion Unaria\n");
                         }                            
-                        else
-                            $$.tipo = $2.tipo;
+                         else{
+                            $$.tipo = $2.tipo; 
+                            $$.dimension = $2.dimension;
+                            $$.tamadim1  = $2.tamadim1;
+                            $$.tamadim2  = $2.tamadim2;  
+                        }
                     break;
                     case 1:
-                        if($2.tipo != entero && $2.tipo != real){
+                        if(($2.dimension !=0)||$2.tipo != entero && $2.tipo != real){
                             yyerror();
                             printf("Error. Tipos no compatibles en expresion Unaria\n");
                          }
-                        else
-                            $$.tipo = $2.tipo;                          
+                         else{
+                            $$.tipo = $2.tipo; 
+                            $$.dimension = $2.dimension;
+                            $$.tamadim1  = $2.tamadim1;
+                            $$.tamadim2  = $2.tamadim2;  
+                        }                         
                     break;
                     case 2:
-                        if($2.tipo != booleano){
+                        if(($2.dimension !=0)|| $2.tipo != booleano){
                             yyerror();
                             printf("Error. Tipos no compatibles en expresion Unaria\n");
                          }                            
-                        else
-                            $$.tipo = $2.tipo;                          
+                         else{
+                            $$.tipo = $2.tipo; 
+                            $$.dimension = $2.dimension;
+                            $$.tamadim1  = $2.tamadim1;
+                            $$.tamadim2  = $2.tamadim2;  
+                        }                         
                     break;
                 }
             }  
 
           | SIGNO_BIN_OP expresion %prec UNI_OP {
-                if($2.tipo != entero && $2.tipo != real){
+                if(($2.dimension !=0)||$2.tipo != entero && $2.tipo != real){
                     yyerror();
                     printf("Error. Tipos no compatibles en expresion Binaria+Unaria\n");
                  }
-                else
-                    $$.tipo = $2.tipo;                  
+                else{
+                    $$.tipo = $2.tipo; 
+                    $$.dimension = $2.dimension;
+                    $$.tamadim1  = $2.tamadim1;
+                    $$.tamadim2  = $2.tamadim2;  
+                 }
             }
           | expresion OR_OP expresion {
-                if($1.tipo != $3.tipo){
+                if(($1.dimension !=0)||($3.dimension !=0)|| $1.tipo != $3.tipo){
                     yyerror();                    
                     printf("Error. Tipos no compatibles en expresion Or\n");
                 }
@@ -181,12 +197,15 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo;}
                     yyerror();
                     printf("ERROR. Tipos no compatibles en expresion Or\n");
                  }
-                else{
-                    $$.tipo = booleano;                   
-                }              
+                else{ 
+                    $$.tipo = booleano;
+                    $$.dimension = 0;
+                    $$.tamadim1 = 0;
+                    $$.tamadim2 = 0;  
+                }                 
           }
           | expresion AND_OP expresion {
-                if($1.tipo != $3.tipo){
+                if(($1.dimension !=0)||($3.dimension !=0)||$1.tipo != $3.tipo){
                     yyerror();
                     printf("Error. Tipos no compatibles en expresion And\n");
                 }
@@ -195,14 +214,17 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo;}
                         yyerror();
                         printf("ERROR. Tipos no compatibles en expresion And\n");
                     }
-                    else{
-                        $$.tipo = booleano;                   
+                    else{ 
+                        $$.tipo = booleano;
+                        $$.dimension = 0;
+                        $$.tamadim1 = 0;
+                        $$.tamadim2 = 0;  
                     }
                 }                
           }
           | expresion XOR_OP expresion 
           {
-                if($1.tipo != $3.tipo){
+                if(($1.dimension !=0)||($3.dimension !=0)||$1.tipo != $3.tipo){
                     yyerror();
                     printf("Error. Tipos no compatibles en expresion Xor\n");
                 }
@@ -210,50 +232,268 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo;}
                     yyerror();
                     printf("ERROR. Tipos no compatibles en expresion Xor\n");
                }                    
-                else{
-                    $$.tipo = booleano;                   
-                }              
+                else{ 
+                $$.tipo = booleano;
+                $$.dimension = 0;
+                $$.tamadim1 = 0;
+                $$.tamadim2 = 0;  
+               }            
           }
           | expresion SIGNO_BIN_OP expresion
-          {if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
-                yyerror();
-                printf("(Error. Tipos no compatibles en expresion Binaria\n");
-          }                
-            else
-                $$.tipo = $1.tipo;
+          {
+            switch($1.atrib){
+                case 0:
+                    if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
+                        yyerror();
+                        printf("(Error. Tipos no compatibles en expresion Binaria-Tamaños de arrays\n");
+                    }
+                    else if(($1.dimension !=$3.dimension)){
+                    
+                        if(($1.dimension ==0 )&&($3.dimension !=0)) {
+                            $$.tipo = $3.tipo;
+                            $$.dimension = $3.dimension;
+                            $$.tamadim1  = $3.tamadim1;
+                            $$.tamadim2  = $3.tamadim2;
+                            
+                        }
+                        else if(($1.dimension !=0 )&&($3.dimension ==0)) {
+                            $$.tipo = $1.tipo;
+                            $$.dimension = $1.dimension;
+                            $$.tamadim1  = $1.tamadim1;
+                            $$.tamadim2  = $1.tamadim2;
+                            
+                        }
+                        else{
+                            yyerror();
+                            printf("Error. Dimensiones no compatibles en expresion Binaria-Tamaños de arrays\n");
+                        }
+                    }
+                    else{
+                        if ($1.tamadim1 == $3.tamadim1 && $1.tamadim2 == $3.tamadim2 ){
+                                $$.tipo = $1.tipo;
+                                $$.dimension = $1.dimension;
+                                $$.tamadim1  = $1.tamadim1;
+                                $$.tamadim2  = $1.tamadim2;
+                        }
+                        else{
+                         yyerror();
+                         printf("Error. Tamaños no compatibles en expresion Binaria-Tamaños de arrays\n");
+                            
+                        }
+                    }
+                    break;
+                case 1:
+                    if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
+                        yyerror();
+                        printf("(Error. Tipos no compatibles en expresion Binaria-Tamaños de arrays\n");
+                    }
+                    else if(($1.dimension !=$3.dimension)){
+                        if(($1.dimension !=0 )&&($3.dimension ==0)) {
+                            $$.tipo = $1.tipo;
+                            $$.dimension = $1.dimension;
+                            $$.tamadim1  = $1.tamadim1;
+                            $$.tamadim2  = $1.tamadim2;
+                            
+                        }
+                        else{
+                            yyerror();
+                            printf("(Error. Dimensiones no compatibles en expresion Binaria-Tamaños de arrays\n");
+                        }
+                    }
+                    else{
+                        if ($1.tamadim1 == $3.tamadim1 && $1.tamadim2 == $3.tamadim2 ){
+                                $$.tipo = $1.tipo;
+                                $$.dimension = $1.dimension;
+                                $$.tamadim1  = $1.tamadim1;
+                                $$.tamadim2  = $1.tamadim2;
+                        }
+                        else{
+                         yyerror();
+                         printf("Error. Tamaños no compatibles en expresion Binaria-Tamaños de arrays\n");
+                            
+                        }
+                    }
+                    break;
+                    
+            }                
+            
           }
           | expresion MULTIDIV_OP expresion
-          {if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
-                yyerror();              
-                printf("Error. Tipos no compatibles en expresion mutiplicacion y div\n");
-          }
-            else
-                $$.tipo = $1.tipo;
+          {
+              switch($1.atrib){
+                case 0:
+                    if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
+                        yyerror();
+                        printf("(Error. Tipos no compatibles en expresion Binaria-Tamaños de arrays\n");
+                    }
+                    else if(($1.dimension !=$3.dimension)){
+                    
+                        if(($1.dimension ==0 )&&($3.dimension !=0)) {
+                            $$.tipo = $3.tipo;
+                            $$.dimension = $3.dimension;
+                            $$.tamadim1  = $3.tamadim1;
+                            $$.tamadim2  = $3.tamadim2;
+                            
+                        }
+                        else if(($1.dimension !=0 )&&($3.dimension ==0)) {
+                            $$.tipo = $1.tipo;
+                            $$.dimension = $1.dimension;
+                            $$.tamadim1  = $1.tamadim1;
+                            $$.tamadim2  = $1.tamadim2;
+                            
+                        }
+                        else{
+                            yyerror();
+                            printf("Error. Dimensiones no compatibles en expresion multiplicacion de arrays\n");
+                        }
+                    }
+                    else{
+                        if ($1.tamadim1 == $3.tamadim1 && $1.tamadim2 == $3.tamadim2 ){
+                                $$.tipo = $1.tipo;
+                                $$.dimension = $1.dimension;
+                                $$.tamadim1  = $1.tamadim1;
+                                $$.tamadim2  = $1.tamadim2;
+                        }
+                        else{
+                         yyerror();
+                         printf("Error. Tamaños no compatibles en expresion multiplicacion de arrays\n");
+                            
+                        }
+                    }
+                    break;
+                case 1:
+                    if(($1.tipo != $3.tipo) && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
+                        yyerror();
+                        printf("(Error. Tipos no compatibles en expresion division de arrays\n");
+                    }
+                    else if(($1.dimension !=$3.dimension)){
+                        if(($1.dimension !=0 )&&($3.dimension ==0)) {
+                            $$.tipo = $1.tipo;
+                            $$.dimension = $1.dimension;
+                            $$.tamadim1  = $1.tamadim1;
+                            $$.tamadim2  = $1.tamadim2;
+                            
+                        }
+                        else{
+                            yyerror();
+                            printf("(Error. Tipos no compatibles en expresion division de arrays\n");
+                        }
+                    }
+                    else{
+                         if ($1.tamadim1 == $3.tamadim1 && $1.tamadim2 == $3.tamadim2 ){
+                                $$.tipo = $1.tipo;
+                                $$.dimension = $1.dimension;
+                                $$.tamadim1  = $1.tamadim1;
+                                $$.tamadim2  = $1.tamadim2;
+                        }
+                        else{
+                         yyerror();
+                         printf("Error. Tamaños no compatibles en expresion division de arrays\n");
+                            
+                        }
+                    }
+                    break;
+                case 2:
+                    if(($1.tipo != $3.tipo) && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
+                        yyerror();
+                        printf("(Error. Tipos no compatibles en expresion multiplicacion matrice de arrays\n");
+                    }
+                    else if(($1.dimension !=$3.dimension)){
+                            yyerror();
+                            printf("(Error. Dimension no compatible en expresion multiplicacion de matrices\n");
+                        
+                    }
+                    else{
+                         if ($1.tamadim2 == $3.tamadim1){ //a[1][2]**b[2][3]
+                                $$.tipo = $1.tipo;
+                                $$.dimension = $1.dimension;
+                                $$.tamadim1  = $1.tamadim1; // en el pdf esta al contrario 3
+                                $$.tamadim2  = $3.tamadim2; //1
+                        }
+                        else{
+                         yyerror();
+                         printf("Error. Tamaños no compatibles en expresion multiplicacion de matrices\n");
+                            
+                        }                    
+                    }
+                    break; 
+
+            }                           
           }
           | expresion RELATIONAL_OP expresion
-          {if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
+          {if(($1.dimension !=0)||($3.dimension !=0)||$1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido)) || ($1.tipo == $3.tipo && $1.tipo!=entero && $1.tipo!=real)) {
                 yyerror();
                 printf("Error. Tipos no compatibles en expresion Condicional_numerica\n");
              }
-            else
+            else{ 
                 $$.tipo = booleano;
+                $$.dimension = 0;
+                $$.tamadim1 = 0;
+                $$.tamadim2 = 0;  
+            }
           }
           | expresion EQNEQ_OP expresion {
-              if($1.tipo != $3.tipo && (($1.tipo==booleano || $1.tipo==caracter || $1.tipo==desconocido) || ($3.tipo==booleano || $3.tipo==caracter || $3.tipo==desconocido))){
+              if(($1.dimension !=0)||($3.dimension !=0)|| $1.tipo != $3.tipo ){
                     yyerror();
                     printf("Error. Tipos no compatibles en expresion Condicional_booleana \n");
                 }
                 else{
-                    $$.tipo = booleano;                   
+                    $$.tipo = booleano;            
+                    $$.dimension = 0;
+                    $$.tamadim1 = 0;
+                    $$.tamadim2 = 0;       
                 } 
           }
-          | identificador {$$.tipo = $1.tipo;}
-          | constante {$$.tipo = $1.tipo;}
-          | llamar_funcion {$$.tipo = $1.tipo;}
+          | identificador {$$.tipo = $1.tipo; 
+                           $$.dimension = $1.dimension;
+                           $$.tamadim1 = $1.tamadim1;
+                           $$.tamadim2 = $1.tamadim2;}
+          | constante {$$.tipo = $1.tipo;
+                            $$.dimension = $1.dimension;
+                            $$.tamadim1  = $1.tamadim1;
+                            $$.tamadim2  = $1.tamadim2;}
+          | llamar_funcion {$$.tipo = $1.tipo;
+                            $$.dimension = $1.dimension;
+                            $$.tamadim1  = $1.tamadim1;
+                            $$.tamadim2  = $1.tamadim2;}
           ;
 
-array : IDENTIFICADOR COR_IZQ expresion COR_DER
-      | IDENTIFICADOR COR_IZQ expresion SEPARADOR expresion COR_DER ;
+array : IDENTIFICADOR COR_IZQ expresion COR_DER {
+    if(decVar)
+        insertarArray($1.lexema, tipo_global, 1, 0, 0); // De momento ponemos 0
+    else{
+        entradaTS *id = buscarSimbolo($1.lexema,0);
+        if(id == NULL){
+            yyerror();
+            printf("Array no declarado %s \n", $1.lexema);
+        }               
+        else{
+            $$.lexema = (*id).nombre;
+            $$.tipo = (*id).tipoDato;
+            $$.dimension = (*id).dimensiones;
+            $$.tamadim1 = (*id).TamDimen1;
+            $$.tamadim2 = (*id).TamDimen2;
+        } 
+    } 
+}
+      | IDENTIFICADOR COR_IZQ expresion SEPARADOR expresion COR_DER {
+    if(decVar)
+        insertarArray($1.lexema, tipo_global, 2, 0, 0); // De momento ponemos 0
+    else{
+        entradaTS *id = buscarSimbolo($1.lexema,0);
+        if(id == NULL){
+            yyerror();
+            printf("Identificador no declarado %s \n", $1.lexema);
+        }               
+        else{
+            $$.lexema = (*id).nombre;
+            $$.tipo = (*id).tipoDato;
+            $$.dimension = (*id).dimensiones;
+            $$.tamadim1 = (*id).TamDimen1;
+            $$.tamadim2 = (*id).TamDimen2;
+        } 
+    }
+};
 
 lista_expresiones : lista_expresiones SEPARADOR expresion 
                   {nParam++;
@@ -270,7 +510,7 @@ lista_expresiones : lista_expresiones SEPARADOR expresion
                         }                    
                   };
 
-llamar_funcion : IDENTIFICADOR PAR_IZQ {entradaTS *id = buscarSimbolo($1.lexema);
+llamar_funcion : IDENTIFICADOR PAR_IZQ {entradaTS *id = buscarSimbolo($1.lexema,0);
                     if(id == NULL){
                         yyerror();
                         printf("Funcion no declarada\n");
@@ -278,7 +518,7 @@ llamar_funcion : IDENTIFICADOR PAR_IZQ {entradaTS *id = buscarSimbolo($1.lexema)
                     else{ pos_fun= buscarPos($1.lexema);}
 				} 
 				lista_expresiones PAR_DER
-                {entradaTS *id = buscarSimbolo($1.lexema);
+                {entradaTS *id = buscarSimbolo($1.lexema,0);
                     if(id == NULL){
                         yyerror();
                         printf("Funcion no declarada\n");
@@ -294,7 +534,7 @@ llamar_funcion : IDENTIFICADOR PAR_IZQ {entradaTS *id = buscarSimbolo($1.lexema)
                     }    
                 }
                | IDENTIFICADOR PAR_IZQ PAR_DER 
-                 {entradaTS *id = buscarSimbolo($1.lexema);
+                 {entradaTS *id = buscarSimbolo($1.lexema,0);
                     if(id == NULL){
                         yyerror();
                         printf("Funcion no declarada\n");
@@ -318,29 +558,36 @@ identificador : IDENTIFICADOR {
         else if(decParam)
             insertarVariable(parametro_formal, $1.lexema, tipo_global);
         else{
-            entradaTS *id = buscarSimbolo($1.lexema);
+            entradaTS *id = buscarSimbolo($1.lexema,0);
             if(id == NULL){
                 yyerror();
                 printf("Identificador no declarado %s \n", $1.lexema);
-               
                  
             }               
             else{
                 $$.lexema = (*id).nombre;
                 $$.tipo = (*id).tipoDato;
+                $$.dimension = (*id).dimensiones;
+                $$.tamadim1 = (*id).TamDimen1;
+                $$.tamadim2 = (*id).TamDimen2;
 				
             }    
         }
     }
-              | array ;
+    | array { $$.lexema = $1.lexema;
+            $$.tipo = $1.tipo;
+            $$.dimension = $1.dimension;
+            $$.tamadim1 = $1.tamadim1;
+            $$.tamadim2 = $1.tamadim2;
+            };
 
-constante : constante_entera {$$.tipo=entero;}
-          | constante_booleana {$$.tipo=$1.tipo;}
-          | constante_caracter {$$.tipo=caracter;}
-          | constante_real {$$.tipo=real;}
+constante : constante_entera {$$.tipo=entero;  $$.dimension=0; $$.tamadim1 = 0; $$.tamadim2 = 0; }
+          | constante_booleana {$$.tipo=$1.tipo; $$.dimension=0; $$.tamadim1 = 0; $$.tamadim2 = 0;}
+          | constante_caracter {$$.tipo=caracter; $$.dimension=0; $$.tamadim1 = 0; $$.tamadim2 = 0;}
+          | constante_real {$$.tipo=real; $$.dimension=0; $$.tamadim1 = 0; $$.tamadim2 = 0;}
           | constante_array ;
 
-constante_array : INICIO_BLOQUE lista_expresiones FIN_BLOQUE
+constante_array : INICIO_BLOQUE lista_expresiones FIN_BLOQUE 
                 | INICIO_BLOQUE lista_expresiones PUN_COMA lista_expresiones FIN_BLOQUE ;
 
 %%
