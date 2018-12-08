@@ -6,8 +6,7 @@ principal {
 		booleano vl ;
 		entero a[10,20];
 		entero b[20,40];
-	
-
+		entero c[10, 40];
 	finvar
 	
 
@@ -78,6 +77,5 @@ principal {
 	}
 
 vf=0;
-a=a**b;
-
+c=a**b;
 }
