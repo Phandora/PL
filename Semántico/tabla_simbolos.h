@@ -40,6 +40,9 @@ extern int decParam;           /* Variable control */
 extern int nParam;             /* Variable control */
 extern int pos_fun;             /* Variable control */
 extern int decSubprog;          /* Variable control */
+extern int expArray;
+extern int aux;
+extern dtipo valorCteArray;
 
 extern int mylineno;            /* Número de línea para errores semánticos */
 

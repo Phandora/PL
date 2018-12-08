@@ -13,6 +13,9 @@ int nParam = 0;             /* Variable control */
 int pos_fun = 0;             /* Variable control */
 int decSubprog = 0;         /* Variable control */
 int mylineno = 1;
+int expArray = 0;
+int aux = 0;
+dtipo valorCteArray=desconocido;
 
 
 void insertarVariable(tipoEntrada entrada, char *name, dtipo type){
@@ -154,7 +157,7 @@ entradaTS * buscarSimbolo(char * nombreSim, int declarar){
     
     for ( int i = TOPE-1; i >= pos_marca; i--){
         //printf("%d\n",i);
-        if (strcmp(TS[i].nombre, nombreSim) == 0){
+        if (strcmp(TS[i].nombre, nombreSim) == 0 && (TS[i].entrada != parametro_formal)){
            // printf("Encontrado simbolo %s\n",nombreSim);
             return &TS[i];
         }

@@ -456,17 +456,28 @@ array : IDENTIFICADOR COR_IZQ expresion COR_DER {
         else
             printf("\n(Linea %d) Error semantico : El tamaño de un array debe ser un entero sin signo\n", mylineno);
     }else{
-        entradaTS *id = buscarSimbolo($1.lexema,0);
-        if(id == NULL){
-            printf("\n(Linea %d) Error semantico : Array no declarado\n", mylineno);
-        }               
-        else{
-            $$.lexema = (*id).nombre;
-            $$.tipo = (*id).tipoDato;
-            $$.dimension = (*id).dimensiones;
-            $$.tamadim1 = (*id).TamDimen1;
-            $$.tamadim2 = (*id).TamDimen2;
-        } 
+        if($3.tipo == entero){
+            if(atoi($3.lexema) > 0){
+                entradaTS *id = buscarSimbolo($1.lexema,0);
+                if(id == NULL){
+                    printf("\n(Linea %d) Error semantico : Array no declarado\n", mylineno);
+                }               
+                else{
+                    if(id->dimensiones == 2)
+                        printf("\n(Linea %d) Error semantico : Falta un índice\n", mylineno);
+                    else{
+                         // $$.lexema = (*id).nombre;  De momento no sabemos el valor de la pos de memoria
+                        $$.tipo = (*id).tipoDato;
+                        $$.dimension = 0;
+                        $$.tamadim1 = 0;
+                        $$.tamadim2 = 0;
+                    }
+                } 
+            } else
+                printf("\n(Linea %d) Error semantico : El tamaño de un array debe ser positivo\n", mylineno);
+        }
+        else
+            printf("\n(Linea %d) Error semantico : El tamaño de un array debe ser un entero sin signo\n", mylineno);
     } 
 }
       | IDENTIFICADOR COR_IZQ expresion SEPARADOR expresion COR_DER {
@@ -480,31 +491,54 @@ array : IDENTIFICADOR COR_IZQ expresion COR_DER {
             printf("\n(Linea %d) Error semantico : Los tamaños de una matriz deben ser un entero sin signo\n", mylineno);
     
     }else{
-        entradaTS *id = buscarSimbolo($1.lexema,0);
-        if(id == NULL){
-            printf("\n(Linea %d) Error semantico : Indentificador no declarado\n", mylineno);
-        }               
-        else{
-            $$.lexema = (*id).nombre;
-            $$.tipo = (*id).tipoDato;
-            $$.dimension = (*id).dimensiones;
-            $$.tamadim1 = (*id).TamDimen1;
-            $$.tamadim2 = (*id).TamDimen2;
-        } 
+        if($3.tipo == entero && $5.tipo == entero){
+            if(atoi($3.lexema) > 0 && atoi($5.lexema) > 0){
+                entradaTS *id = buscarSimbolo($1.lexema,0);
+                if(id == NULL){
+                    printf("\n(Linea %d) Error semantico : Indentificador no declarado\n", mylineno);
+                }               
+                else{
+                    if ((*id).dimensiones ==1){
+                        printf("\n(Linea %d) Error semantico : Sobra un índice\n", mylineno);
+                    }
+                    else{                                        
+                        // $$.lexema = (*id).nombre; De momento no sabemos el valor de la pos de memoria
+                        $$.tipo = (*id).tipoDato;
+                        $$.dimension = 0;
+                        $$.tamadim1 = 0;
+                        $$.tamadim2 = 0;
+                    }
+                } 
+            }else
+                printf("\n(Linea %d) Error semantico : Los tamaños de una matriz deben ser positivos\n", mylineno);
+        }
+        else
+            printf("\n(Linea %d) Error semantico : Los tamaños de una matriz deben ser un entero sin signo\n", mylineno);
     }
 };
 
 lista_expresiones : lista_expresiones SEPARADOR expresion 
                   {nParam++;
-                    if(TS[pos_fun+nParam].tipoDato!=$3.tipo){
-                        printf("\n(Linea %d) Error semantico : %s Parámetro de tipo incorrecto\n", mylineno, $3.lexema);                 
-                    }
+                   if (expArray==1){
+                      if (valorCteArray != $3.tipo)
+                         printf("\n(Linea %d) Error semantico : %s Parámetro de tipo incorrecto en array\n", mylineno, $3.lexema); 
+                  }
+                  else {
+                        if(TS[pos_fun+nParam].tipoDato!=$3.tipo){
+                            printf("\n(Linea %d) Error semantico : %s Parámetro de tipo incorrecto\n", mylineno, $3.lexema);                 
+                        }
+                  }
                   }
                   | expresion 
                   {nParam=1 ; 
-                  if(TS[pos_fun+nParam].tipoDato!=$1.tipo){
-                        printf("\n(Linea %d) Error semantico : %s Parámetro de tipo incorrecto\n", mylineno, $1.lexema);                 
-                        }                    
+                  if (expArray==1){
+                      valorCteArray = $1.tipo;
+                  }
+                  else {
+                    if(TS[pos_fun+nParam].tipoDato!=$1.tipo){
+                            printf("\n(Linea %d) Error semantico : %s Parámetro de tipo incorrecto\n", mylineno, $1.lexema);                 
+                        }
+                  }                    
                   };
 
 llamar_funcion : IDENTIFICADOR PAR_IZQ {entradaTS *id = buscarSimbolo($1.lexema,0);
@@ -575,10 +609,15 @@ constante : constante_entera {$$.tipo=entero;  $$.dimension=0; $$.tamadim1 = 0; 
           | constante_booleana {$$.tipo=$1.tipo; $$.dimension=0; $$.tamadim1 = 0; $$.tamadim2 = 0;}
           | constante_caracter {$$.tipo=caracter; $$.dimension=0; $$.tamadim1 = 0; $$.tamadim2 = 0;}
           | constante_real {$$.tipo=real; $$.dimension=0; $$.tamadim1 = 0; $$.tamadim2 = 0;}
-          | constante_array ;
+          | {expArray = 1;} constante_array {
+              $$.tipo = $2.tipo; 
+              $$.dimension = $2.dimension; 
+              $$.tamadim1 = $2.tamadim1; 
+              $$.tamadim2 = $2.tamadim2; 
+              $$.tipo = $2.tipo;};
 
-constante_array : INICIO_BLOQUE lista_expresiones FIN_BLOQUE 
-                | INICIO_BLOQUE lista_expresiones PUN_COMA lista_expresiones FIN_BLOQUE ;
+constante_array : INICIO_BLOQUE lista_expresiones FIN_BLOQUE {expArray = 0; $$.dimension=1; $$.tamadim1=nParam; $$.tamadim2 = 0; $$.tipo = valorCteArray;}
+                | INICIO_BLOQUE lista_expresiones PUN_COMA {aux = nParam;} lista_expresiones FIN_BLOQUE {expArray = 0; $$.dimension=2; $$.tamadim1 = aux ;$$.tamadim2 = nParam; $$.tipo = valorCteArray;};
 
 %%
 

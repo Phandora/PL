@@ -4,6 +4,7 @@ principal {
 		real vf;
 		caracter vc ;
 		booleano vl ;
+		entero d[3,3];
 		entero a[10,20];
 		entero b[20,40];
 		entero c[10, 40];
@@ -36,6 +37,7 @@ principal {
 			
 			mientras (x2*funcionC(falso,1)-xf<10.0)
 				x2= x2*xf ;
+				
 		}
 		
 		real funcionD (real d1){
@@ -78,4 +80,5 @@ principal {
 
 vf=0;
 c=a**b;
+d = {1,2,3 ; 1, 2,3};
 }
