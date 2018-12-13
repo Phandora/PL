@@ -1,11 +1,10 @@
 principal {
 	var
-		entero ve; 
-		ente··ro ve1,ve2;
+		entero ve;
+		entero vd; 
 		real vf;
 		caracter vc ;
 		booleano vl ;
-		entero d[3,3],d23[2,3], d32[3,2];
 		entero a[10,20];
 		entero b[20,40];
 		entero c[10, 40];
@@ -14,7 +13,7 @@ principal {
 
 	entero funcionA (entero a1, real a2, caracter a3){
 		var
-			entero x1, x2,a1 ;
+			entero x1, x2;
 		finvar
 
 		caracter funcionB (caracter b1, booleano b2){
@@ -26,10 +25,7 @@ principal {
 					real x1 ;
 				finvar
 				x1= 1.3 ;
-				ve = ve1*2;
-				ve = funcionA(2+1,2.5,'a');
-				ve = funcionA(1,2,3,4,5);
-				si ((c2>10)+2)
+				si (c2>10)
 					c2= c2-1 ;
 				sino
 					x1= 3.1 ;
@@ -83,10 +79,9 @@ principal {
 	}
 
 vf=1.0;
-d = d*3+d;
-d = d+d23*2.5;
-d = d32**d23;
-d = d*2.5;
 c=a**b;
-d = {1,2,3 ; 1, 2,3};
+ve=-2;
+vd=-3;
+ve= -(ve+vd-ve);
+vl = !falso;
 }
