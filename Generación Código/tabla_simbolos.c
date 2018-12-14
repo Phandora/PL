@@ -17,6 +17,8 @@ int expArray = 0;
 int aux = 0;
 dtipo valorCteArray=desconocido;
 int N = 0;
+char *codigo;
+int mainDeclared = 0;
 
 void insertarVariable(tipoEntrada entrada, char *name, dtipo type){
    
@@ -204,7 +206,7 @@ char* temporal(){
 }
 
 
-void generaCodigoExpBinaria(atributos *L, atributos *a1, atributos op, atributos *a2){
+void generaCodigoExpBinaria(atributos *L, atributos a1, atributos op, atributos a2){
     char *tipo = (char*) malloc(5*sizeof(char));
     char *signo = (char*) malloc(2*sizeof(char));
     char *tmp = (char*) malloc(100*sizeof(char));
@@ -218,7 +220,7 @@ void generaCodigoExpBinaria(atributos *L, atributos *a1, atributos op, atributos
         tipo = "int";
     }
     else{
-        switch(a1->tipo){
+        switch(a1.tipo){
             case entero: tipo = "int"; break;
             case real: tipo = "float"; break;
             case caracter: tipo = "char"; break;
@@ -226,30 +228,27 @@ void generaCodigoExpBinaria(atributos *L, atributos *a1, atributos op, atributos
         }
     }
 
-    if(a1->vartemp == NULL){
-        var1 = a1->lexema;
-        a1->tipovartemp = a1->tipo; 
+    if(a1.vartemp == NULL){
+        var1 = a1.lexema;
     } else {
-        var1 = a1->vartemp;
+        var1 = a1.vartemp;
     }
 
-    if(a2->vartemp == NULL){
-        var2 = a2->lexema;
-        a2->tipovartemp = a2->tipo; 
+    if(a2.vartemp == NULL){
+        var2 = a2.lexema;
     } else {
-        var2 = a2->vartemp;
+        var2 = a2.vartemp;
     }
 
-    char *code = (char*) malloc(100*sizeof(char));
+    char *localcode = (char*) malloc(200*sizeof(char));
     tmp = temporal();
-    sprintf(code, "%s %s;\n%s = %s %s %s;\n", tipo, tmp, tmp, var1, signo, var2);
-    printf("%s", code);
+    sprintf(localcode, "%s %s;\n%s = %s %s %s;\n", tipo, tmp, tmp, var1, signo, var2);
+    strcat(codigo, localcode);
     L->vartemp = tmp;
-    
 }
 
 
-void generaCodigoExpUnaria(atributos *L, atributos *a1, atributos op){
+void generaCodigoExpUnaria(atributos *L, atributos a1, atributos op){
     char *tipo = (char*) malloc(5*sizeof(char));
     char *signo = (char*) malloc(2*sizeof(char));
     char *tmp = (char*) malloc(100*sizeof(char));
@@ -257,7 +256,7 @@ void generaCodigoExpUnaria(atributos *L, atributos *a1, atributos op){
 
     signo = op.lexema;
 
-    switch(a1->tipo){
+    switch(a1.tipo){
         case entero: tipo = "int"; break;
         case real: tipo = "float"; break;
         case caracter: tipo = "char"; break;
@@ -265,22 +264,39 @@ void generaCodigoExpUnaria(atributos *L, atributos *a1, atributos op){
     }
     
 
-    if(a1->vartemp == NULL){
-        if(strcmp(a1->lexema, "verdadero") == 0)
+    if(a1.vartemp == NULL){
+        if(strcmp(a1.lexema, "verdadero") == 0)
             var1 = "1";
-        else if (strcmp(a1->lexema, "falso") == 0)
+        else if (strcmp(a1.lexema, "falso") == 0)
             var1 = "0";
         else
-            var1 = a1->lexema;
-        a1->tipovartemp = a1->tipo; 
+            var1 = a1.lexema;
     } else {
-        var1 = a1->vartemp;
+        var1 = a1.vartemp;
     }
 
     char *code = (char*) malloc(100*sizeof(char));
     tmp = temporal();
     sprintf(code, "%s %s;\n%s = %s %s;\n", tipo, tmp, tmp, signo, var1);
-    printf("%s", code);
+    strcat(codigo, code);
     L->vartemp = tmp;
 }
+
+
+void generaDeclaracionVariable(atributos id){
+    entradaTS *aux = buscarSimbolo(id.lexema, 0);
+    char *tipo = (char*) malloc(5*sizeof(char));
+    char *res = (char*) malloc(50*sizeof(char));
+
+    switch(aux->tipoDato){
+        case entero: strcpy(tipo, "int"); break;
+        case real: strcpy(tipo, "float"); break;
+        case caracter: strcpy(tipo, "char"); break;
+        case booleano: strcpy(tipo, "int"); break;
+    }
+
+    sprintf(res, "%s %s;\n", tipo, id.lexema);
+    strcat(codigo, res);
+}
+
 

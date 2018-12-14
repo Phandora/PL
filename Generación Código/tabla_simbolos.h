@@ -45,6 +45,8 @@ extern int expArray;
 extern int aux;
 extern dtipo valorCteArray;
 extern int N;
+extern char *codigo;
+extern int mainDeclared;
 
 extern int mylineno;            /* Número de línea para errores semánticos */
 
@@ -55,9 +57,7 @@ typedef struct {
     int dimension;
     int tamadim1;
     int tamadim2;
-    char *codigo;       /* Para la generación de código intermedio */
     char *vartemp;
-    dtipo tipovartemp;
 } atributos ;
 
 // A partir de ahora, cada símbolo tiene una estructura de tipo atributos
@@ -77,7 +77,8 @@ void valores_en_pila();
 
 /* Funciones para la generación de código intermedio */
 char* temporal();
-void generaCodigoExpBinaria(atributos *L, atributos *a1, atributos op, atributos *a2);
-void generaCodigoExpUnaria(atributos *L, atributos *a1, atributos op);
+void generaCodigoExpBinaria(atributos *L, atributos a1, atributos op, atributos a2);
+void generaCodigoExpUnaria(atributos *L, atributos a1, atributos op);
+void generaDeclaracionVariable(atributos id);
 
 #endif

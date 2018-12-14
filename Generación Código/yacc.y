@@ -50,12 +50,12 @@
 
 %%
 
-programa : MAIN {decSubprog = 1;} bloque {decSubprog = 0;};
+programa : MAIN {decSubprog = 1;} bloque {decSubprog = 0; /*Aquí hay que realizar la escitura del fichero en lugar de print Añadir } main*/ strcat(codigo, "}\n"); printf("%s", codigo);};
 
 bloque : INICIO_BLOQUE {insertarMarca();}
          declar_de_variables_locales
          declar_de_subprogs
-         sentencias
+         {if(!mainDeclared){strcat(codigo, "int main(){\n"); mainDeclared = 1;}} sentencias 
          FIN_BLOQUE {eliminarBloque();}
          ;
          
@@ -73,10 +73,10 @@ variables_locales : variables_locales cuerpo_declar_variables
                   | cuerpo_declar_variables 
                   | error ;
 
-cuerpo_declar_variables : TIPO {tipo_global=$1.tipo;} lista_variables PUN_COMA ;
+cuerpo_declar_variables : TIPO {tipo_global=$1.tipo;} lista_variables PUN_COMA;
 
-lista_variables : identificador
-                | identificador SEPARADOR lista_variables ;
+lista_variables : identificador {generaDeclaracionVariable($1);}
+                | identificador SEPARADOR lista_variables {generaDeclaracionVariable($1);};
                           
 cabecera_subprog : TIPO IDENTIFICADOR PAR_IZQ {insertarFuncion($2.lexema, $2.tipo, 0); decParam=1;} lista_parametros PAR_DER {decParam = 0;}
                  | TIPO IDENTIFICADOR PAR_IZQ PAR_DER {insertarFuncion($2.lexema, $2.tipo, 0);};
@@ -100,7 +100,7 @@ sentencia : bloque
           | sentencia_hacer_hasta 
           |error;
 
-sentencia_asignacion : identificador ASIGNACION {printf("{\n");} expresion PUN_COMA{
+sentencia_asignacion : identificador ASIGNACION {strcat(codigo, "{\n");} expresion PUN_COMA{
     if($1.dimension != $4.dimension)
         printf("\n(Linea %d) Error semantico : dimensiones incompatibles en la asignación.\n", mylineno); 
     else
@@ -109,15 +109,18 @@ sentencia_asignacion : identificador ASIGNACION {printf("{\n");} expresion PUN_C
                 if($1.tipo != $4.tipo)                     
                     printf("\n(Linea %d) Error semantico : tipos incompatibles en la asignación.\n", mylineno);
                 else{
+                    char *localcode = (char*) malloc(100*sizeof(char));
                     if($4.vartemp == NULL){
                         if(strcmp($4.lexema, "verdadero") == 0)
-                            printf("%s = %s;\n}\n\n", $1.lexema, "1");
+                            sprintf(localcode, "%s = %s;\n}\n\n", $1.lexema, "1");
                         else if(strcmp($4.lexema, "falso") == 0)
-                            printf("%s = %s;\n}\n\n", $1.lexema, "0");
+                            sprintf(localcode, "%s = %s;\n}\n\n", $1.lexema, "0");
                         else
-                            printf("%s = %s;\n}\n\n", $1.lexema, $4.lexema);
-                    } else
-                        printf("%s = %s;\n}\n\n", $1.lexema, $4.vartemp);
+                            sprintf(localcode, "%s = %s;\n}\n\n", $1.lexema, $4.lexema);
+                    } else 
+                        sprintf(localcode, "%s = %s;\n}\n\n", $1.lexema, $4.vartemp);
+                    
+                    strcat(codigo, localcode);
                 }
                 break;
             case 1:
@@ -177,7 +180,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                             $$.dimension = $2.dimension;
                             $$.tamadim1  = $2.tamadim1;
                             $$.tamadim2  = $2.tamadim2;
-                            generaCodigoExpUnaria(&$$, &$2, $1);
+                            generaCodigoExpUnaria(&$$, $2, $1);
                         }
                     break;
                     case 1:
@@ -189,7 +192,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                             $$.dimension = $2.dimension;
                             $$.tamadim1  = $2.tamadim1;
                             $$.tamadim2  = $2.tamadim2;
-                            generaCodigoExpUnaria(&$$, &$2, $1);
+                            generaCodigoExpUnaria(&$$, $2, $1);
                         }                         
                     break;
                     case 2:
@@ -201,7 +204,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                             $$.dimension = $2.dimension;
                             $$.tamadim1  = $2.tamadim1;
                             $$.tamadim2  = $2.tamadim2;
-                            generaCodigoExpUnaria(&$$, &$2, $1);
+                            generaCodigoExpUnaria(&$$, $2, $1);
                         }                         
                     break;
                 }
@@ -216,7 +219,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                     $$.dimension = $2.dimension;
                     $$.tamadim1  = $2.tamadim1;
                     $$.tamadim2  = $2.tamadim2;
-                    generaCodigoExpUnaria(&$$, &$2, $1); 
+                    generaCodigoExpUnaria(&$$, $2, $1); 
                  }
             }
           | expresion OR_OP expresion {
@@ -231,7 +234,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                     $$.dimension = 0;
                     $$.tamadim1 = 0;
                     $$.tamadim2 = 0;
-                    generaCodigoExpBinaria(&$$, &$1, $2, &$3);
+                    generaCodigoExpBinaria(&$$, $1, $2, $3);
                 }                 
           }
           | expresion AND_OP expresion {
@@ -247,7 +250,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                         $$.dimension = 0;
                         $$.tamadim1 = 0;
                         $$.tamadim2 = 0;
-                        generaCodigoExpBinaria(&$$, &$1, $2, &$3);
+                        generaCodigoExpBinaria(&$$, $1, $2, $3);
                     }
                 }                
           }
@@ -264,7 +267,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                 $$.dimension = 0;
                 $$.tamadim1 = 0;
                 $$.tamadim2 = 0;
-                generaCodigoExpBinaria(&$$, &$1, $2, &$3);
+                generaCodigoExpBinaria(&$$, $1, $2, $3);
                }            
           }
           | expresion SIGNO_BIN_OP expresion
@@ -299,7 +302,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                                 $$.dimension = $1.dimension;
                                 $$.tamadim1  = $1.tamadim1;
                                 $$.tamadim2  = $1.tamadim2;
-                                generaCodigoExpBinaria(&$$, &$1, $2, &$3);
+                                generaCodigoExpBinaria(&$$, $1, $2, $3);
                         }
                         else{
                           printf("\n(Linea %d) Error semantico : Tamaños no compatibles en expresion Binaria (%s) de arrays\n", mylineno, $2.lexema);
@@ -329,7 +332,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                                 $$.dimension = $1.dimension;
                                 $$.tamadim1  = $1.tamadim1;
                                 $$.tamadim2  = $1.tamadim2;
-                                generaCodigoExpBinaria(&$$, &$1, $2, &$3);
+                                generaCodigoExpBinaria(&$$, $1, $2, $3);
                         }
                         else{
                           printf("\n(Linea %d) Error semantico : Tamaños no compatibles en expresion Binaria (%s) de arrays\n", mylineno, $2.lexema);
@@ -373,7 +376,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                                 $$.dimension = $1.dimension;
                                 $$.tamadim1  = $1.tamadim1;
                                 $$.tamadim2  = $1.tamadim2;
-                                generaCodigoExpBinaria(&$$, &$1, $2, &$3);
+                                generaCodigoExpBinaria(&$$, $1, $2, $3);
                         }
                         else{
                           printf("\n(Linea %d) Error semantico : Tamaños no compatibles en expresion Binaria (%s) de arrays\n", mylineno, $2.lexema);
@@ -402,7 +405,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                                 $$.dimension = $1.dimension;
                                 $$.tamadim1  = $1.tamadim1;
                                 $$.tamadim2  = $1.tamadim2;
-                                generaCodigoExpBinaria(&$$, &$1, $2, &$3);
+                                generaCodigoExpBinaria(&$$, $1, $2, $3);
                         }
                         else{
                          printf("\n(Linea %d) Error semantico : Tamaños no compatibles en expresion división de arrays\n", mylineno);
@@ -441,7 +444,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                 $$.dimension = 0;
                 $$.tamadim1 = 0;
                 $$.tamadim2 = 0;  
-                generaCodigoExpBinaria(&$$, &$1, $2, &$3);
+                generaCodigoExpBinaria(&$$, $1, $2, $3);
             }
           }
           | expresion EQNEQ_OP expresion {
@@ -454,7 +457,7 @@ expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dime
                     $$.dimension = 0;
                     $$.tamadim1 = 0;
                     $$.tamadim2 = 0;
-                    generaCodigoExpBinaria(&$$, &$1, $2, &$3);  
+                    generaCodigoExpBinaria(&$$, $1, $2, $3);  
                 } 
           }
           | identificador {$$.tipo = $1.tipo; 
@@ -690,6 +693,9 @@ FILE *abrir_entrada(int argc, char **argv){
 }
 
 int main(int argc, char **argv){
+
+    codigo = (char*) malloc(5000*sizeof(char));
+    strcat(codigo, "#include <stdio.h>\n#include <string.h>\n\n");
 
     yyin= abrir_entrada(argc,argv);
     /*int an = yylex();

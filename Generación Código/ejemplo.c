@@ -1,6 +1,6 @@
 principal {
 	var
-		entero ve;
+		entero ve, pa, pe, pi, po;
 		entero vd; 
 		real vf;
 		caracter vc ;
