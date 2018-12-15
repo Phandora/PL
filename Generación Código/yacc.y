@@ -52,15 +52,13 @@
 
 programa : MAIN {decSubprog = 1;} bloque {decSubprog = 0; /*Aquí hay que realizar la escitura del fichero en lugar de print Añadir } main*/ printf("%s", codigo);};
 
-bloque : INICIO_BLOQUE {insertarMarca();}
+bloque : INICIO_BLOQUE {insertarMarca(); if(mainDeclared) strcat(codigo, "{  //Inicio de bloque\n");}
          declar_de_variables_locales
          declar_de_subprogs
          {
              if(!mainDeclared){
                 strcat(codigo, "int main()\n{ //Inicio de bloque\n"); 
                 mainDeclared = 1;
-             }else{
-                strcat(codigo, "{  //Inicio de bloque\n"); 
              }
          } 
          sentencias 
@@ -166,22 +164,38 @@ else : SINO { generarELSE(); } sentencia {
                     
                     DescriptorDeInstrControl aux = TD[TOPE_TD-1];
                     char *aux2 = (char*) malloc(100*sizeof(char));
-                    sprintf(aux2, "} // Fin traducción if\n%s : // Etiqueta salida\n", aux.EtiquetaSalida);
+                    sprintf(aux2, "} // Fin traducción if\n%s:; // Etiqueta salida\n", aux.EtiquetaSalida);
                     strcat(codigo, aux2);
                     --TOPE_TD;
             }
       | {   generarELSE();
             DescriptorDeInstrControl aux = TD[TOPE_TD-1];
             char *aux2 = (char*) malloc(100*sizeof(char));
-            sprintf(aux2, "} // Fin traducción if\n%s : // Etiqueta salida\n", aux.EtiquetaSalida);
+            sprintf(aux2, "} // Fin traducción if\n%s:; // Etiqueta salida\n", aux.EtiquetaSalida);
             strcat(codigo, aux2);
           --TOPE_TD;};
 
 
              
-sentencia_mientras : MIENTRAS PAR_IZQ expresion PAR_DER sentencia {if(($3.dimension !=0)||$3.tipo != booleano){ printf("\n(Linea %d) Error semantico : expresión invalida en la sentencia mientras.\n", mylineno); }};
+sentencia_mientras : MIENTRAS PAR_IZQ {
+                    strcat(codigo, "{ //Inicio de traducion del while\n");
+                    Etiquetado(generarEtiquetas());
+                    char *aux2 = (char*) malloc(100*sizeof(char));
+                    DescriptorDeInstrControl aux = TD[TOPE_TD-1];
+                    sprintf(aux2, "%s :;\n", aux.EtiquetaEntrada);
+                    strcat(codigo, aux2);
+                    } expresion PAR_DER {generaWHILE($4);}  sentencia {
+        if(($4.dimension !=0)||$4.tipo != booleano){ 
+            printf("\n(Linea %d) Error semantico : expresión invalida en la sentencia mientras.\n", mylineno); 
+        } else {
+            char* aux = (char*) malloc(100*sizeof(char));
+            sprintf(aux, "goto %s;\n} //Fin traducción del while\n%s:;\n", TD[TOPE_TD-1].EtiquetaEntrada, TD[TOPE_TD-1].EtiquetaSalida);
+            strcat(codigo, aux);
+            TOPE_TD--;
+        }
+    };
 
-sentencia_entrada : LEER lista_var_cad PUN_COMA ;
+sentencia_entrada : LEER lista_var_cad {} PUN_COMA ;
 
 lista_var_cad : lista_var_cad SEPARADOR identificador
               | CONST_STRING
@@ -200,7 +214,23 @@ exp_cad : expresion
   
 sentencia_devolver : DEVOLVER expresion PUN_COMA {if((TS[funcion_actual].dimensiones != 0 )||$2.tipo != TS[funcion_actual].tipoDato){ printf("\n(Linea %d) Error semantico : tipo devuelto incompatible con la función\n", mylineno); }};
 
-sentencia_hacer_hasta : HACER sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA {if(($5.dimension !=0)||$5.tipo != booleano){ printf("\n(Linea %d) Error semantico : expresión invalida en la sentencia hacer hasta.\n", mylineno); }};
+sentencia_hacer_hasta : HACER {
+                        strcat(codigo, "{ //Inicio de traducion del do while\n");
+                        Etiquetado(generarEtiquetas());
+                        char *aux2 = (char*) malloc(100*sizeof(char));
+                        DescriptorDeInstrControl aux = TD[TOPE_TD-1];
+                        sprintf(aux2, "%s:;\n", aux.EtiquetaEntrada);
+                        strcat(codigo, aux2);
+                    } sentencia HASTA PAR_IZQ expresion PAR_DER PUN_COMA {
+                        if(($6.dimension !=0)||$6.tipo != booleano){ 
+                            printf("\n(Linea %d) Error semantico : expresión invalida en la sentencia hacer hasta.\n", mylineno); 
+                        } else{
+                            char* aux = (char*) malloc(100*sizeof(char));
+                            sprintf(aux, "if(%s) goto %s;\n} // Fin traducción do while\n", $6.vartemp, TD[TOPE_TD-1].EtiquetaEntrada);
+                            strcat(codigo, aux);
+                            TOPE_TD--;
+                        }
+                    };
                   
 expresion : PAR_IZQ expresion PAR_DER {$$.tipo = $2.tipo; $$.dimension = $2.dimension; $$.tamadim1  = $2.tamadim1; $$.tamadim2  = $2.tamadim2; $$.vartemp = $2.vartemp;}
           | UNI_OP expresion {    

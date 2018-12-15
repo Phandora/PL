@@ -325,6 +325,20 @@ void generarELSE(){
     char *localcode = (char*) malloc(100*sizeof(char));
     DescriptorDeInstrControl aux = TD[TOPE_TD-1];
     strcat(codigo, aux.EtiquetaElse);
-    strcat(codigo, ": //Etiqueta else\n");    
+    strcat(codigo, ":; //Etiqueta else\n");    
 }
 
+
+void generaWHILE(atributos a){
+    char *localcode = (char*) malloc(100*sizeof(char));
+    TD[TOPE_TD-1].EtiquetaSalida = generarEtiquetas();
+    sprintf(localcode, "if(!%s) goto %s;\n", a.vartemp, TD[TOPE_TD-1].EtiquetaSalida);
+    strcat(codigo, localcode);
+}
+
+
+void Etiquetado(char* etiqENTRADA){
+    DescriptorDeInstrControl tmp = {.EtiquetaEntrada = etiqENTRADA};
+    TD[TOPE_TD] = tmp;
+    TOPE_TD++;
+}

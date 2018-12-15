@@ -101,7 +101,8 @@ char* generarEtiquetas();
 *
 */
 void generarIF(atributos a);
-
 void generarELSE();
+void generaWHILE(atributos a);
+void Etiquetado(char* etiqENTRADA);
 
 #endif

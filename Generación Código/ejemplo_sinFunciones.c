@@ -18,9 +18,6 @@ principal{
         si ( curr == n){
             salida "valor: ", curr;
             n = n / curr;
-            si (n > 1){
-                n = n + curr;
-            }
         }
     }
 
