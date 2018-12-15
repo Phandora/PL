@@ -23,7 +23,7 @@ typedef struct {
     char *nombre ;
     dtipo tipoDato ;
     unsigned int parametros ;
-    unsigned int dimensiones ;
+    unsigned int dimensiones ; 
     int TamDimen1 ; /* Tamaño Dimensión 1 */
     int TamDimen2 ; /* Tamaño Dimensión 2 */
 } entradaTS ;

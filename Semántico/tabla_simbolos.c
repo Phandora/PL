@@ -126,9 +126,28 @@ void insertarFuncion(char *name, dtipo type, unsigned int param){
 }
 
 void insertarArray(char *name, dtipo type, unsigned int dim, int dim1, int dim2){
+<<<<<<< Updated upstream
      
    
     entradaTS *encontrado = buscarSimbolo(name,1);
+=======
+<<<<<<< Updated upstream
+=======
+    entradaTS var   =    {.entrada = variable,
+                          .nombre  = name,
+                          .tipoDato = type,
+                          .parametros = 0,
+                          .dimensiones = dim,
+                          .TamDimen1 = dim1,
+                          .TamDimen2 = dim2};
+                         // .tipoArray = type };
+    
+    TS[TOPE];
+    TOPE ++;
+>>>>>>> Stashed changes
+    
+    entradaTS *encontrado = buscarSimbolo(name);
+>>>>>>> Stashed changes
     if(encontrado == NULL){
         entradaTS var   =    {.entrada = variable,
                             .nombre  = name,

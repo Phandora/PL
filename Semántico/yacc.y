@@ -57,6 +57,7 @@ bloque : INICIO_BLOQUE {insertarMarca();}
          FIN_BLOQUE {eliminarBloque();}
          ;
          
+         
 declar_de_subprogs : declar_de_subprogs declar_subprog
                    | ;
                      
@@ -67,11 +68,15 @@ declar_de_variables_locales : INI_DECLARACION {decVar = 1;}
                               FIN_DECLARACION {decVar = 0;}
 							  |;
 
-variables_locales : variables_locales cuerpo_declar_variables
+variables_locales : variables_locales cuerpo_declar_variables 
                   | cuerpo_declar_variables 
                   | error ;
 
+<<<<<<< Updated upstream
 cuerpo_declar_variables : TIPO {tipo_global=$1.tipo;} lista_variables PUN_COMA ;
+=======
+cuerpo_declar_variables : TIPO lista_variables PUN_COMA ;
+>>>>>>> Stashed changes
 
 lista_variables : identificador
                 | identificador SEPARADOR lista_variables ;
