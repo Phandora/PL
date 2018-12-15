@@ -55,8 +55,16 @@ programa : MAIN {decSubprog = 1;} bloque {decSubprog = 0; /*Aquí hay que realiz
 bloque : INICIO_BLOQUE {insertarMarca();}
          declar_de_variables_locales
          declar_de_subprogs
-         {if(!mainDeclared){strcat(codigo, "int main(){\n"); mainDeclared = 1;}} sentencias 
-         FIN_BLOQUE {eliminarBloque();}
+         {
+             if(!mainDeclared){
+                strcat(codigo, "int main(){ // Main\n"); 
+                mainDeclared = 1;
+             }else{
+                strcat(codigo, "{  //Inicio de bloque\n"); 
+             }
+         } 
+         sentencias 
+         FIN_BLOQUE {eliminarBloque(); strcat(codigo, "} // FIN BLOQUE\n");}
          ;
          
 declar_de_subprogs : declar_de_subprogs declar_subprog
@@ -100,50 +108,63 @@ sentencia : bloque
           | sentencia_hacer_hasta 
           |error;
 
-sentencia_asignacion : identificador ASIGNACION {strcat(codigo, "{\n");} expresion PUN_COMA{
+sentencia_asignacion : identificador ASIGNACION expresion PUN_COMA{
     if($1.dimension != $4.dimension)
         printf("\n(Linea %d) Error semantico : dimensiones incompatibles en la asignación.\n", mylineno); 
     else
         switch($1.dimension){
             case 0: //Variable 
-                if($1.tipo != $4.tipo)                     
+                if($1.tipo != $3.tipo)                     
                     printf("\n(Linea %d) Error semantico : tipos incompatibles en la asignación.\n", mylineno);
                 else{
                     char *localcode = (char*) malloc(100*sizeof(char));
                     if($4.vartemp == NULL){
-                        if(strcmp($4.lexema, "verdadero") == 0)
-                            sprintf(localcode, "%s = %s;\n}\n\n", $1.lexema, "1");
-                        else if(strcmp($4.lexema, "falso") == 0)
-                            sprintf(localcode, "%s = %s;\n}\n\n", $1.lexema, "0");
+                        if(strcmp($3.lexema, "verdadero") == 0)
+                            sprintf(localcode, "%s = %s;\n", $1.lexema, "1");
+                        else if(strcmp($3.lexema, "falso") == 0)
+                            sprintf(localcode, "%s = %s;\n", $1.lexema, "0");
                         else
-                            sprintf(localcode, "%s = %s;\n}\n\n", $1.lexema, $4.lexema);
+                            sprintf(localcode, "%s = %s;\n", $1.lexema, $4.lexema);
                     } else 
-                        sprintf(localcode, "%s = %s;\n}\n\n", $1.lexema, $4.vartemp);
+                        sprintf(localcode, "%s = %s;\n", $1.lexema, $4.vartemp);
                     
                     strcat(codigo, localcode);
                 }
                 break;
             case 1:
-                if($1.tamadim1 != $4.tamadim1)
+                if($1.tamadim1 != $3.tamadim1)
                     printf("\n(Linea %d) Error semantico : tamaños incompatibles en la asignación.\n", mylineno);	 
-                else if($1.tipo != $4.tipo)
+                else if($1.tipo != $3.tipo)
                         printf("\n(Linea %d) Error semantico : tipos incompatibles en la asignación.\n", mylineno);
                 break;
             case 2:
-                if($1.tamadim1 != $4.tamadim1 || $1.tamadim2 != $4.tamadim2)
+                if($1.tamadim1 != $3.tamadim1 || $1.tamadim2 != $3.tamadim2)
                     printf("\n(Linea %d) Error semantico : tamaños incompatibles en la asignación.\n", mylineno);	 
-                else if($1.tipo != $4.tipo )
+                else if($1.tipo != $3.tipo )
                         printf("\n(Linea %d) Error semantico : tipos incompatibles en la asignación.\n", mylineno);
                 break;
         }
 };	 
                     
-sentencia_si : SI PAR_IZQ expresion PAR_DER sentencia {
+sentencia_si : SI PAR_IZQ expresion  PAR_DER {
+                char *localcode = (char*) malloc(100*sizeof(char));
+                sprintf(localcode, "if(temp%d)//Inicio IF\n",N-1);
+                strcat(codigo, localcode);
+                } sentencia {
             if(( $3.dimension !=0 )||$3.tipo != booleano){ 
                printf("\n(Linea %d) Error semantico : expresión invalida en la sentencia condicional.\n", mylineno); 
             }
             };
-            | SI PAR_IZQ expresion PAR_DER sentencia SINO sentencia {if(( $3.dimension !=0 )||$3.tipo != booleano){ printf("\n(Linea %d) Error semantico : expresión invalida en la sentencia condicional.\n", mylineno); }};
+            | SI PAR_IZQ expresion PAR_DER {
+                char *localcode = (char*) malloc(100*sizeof(char));
+                sprintf(localcode, "if(temp%d) //Inicio IF\n",N-1);
+                strcat(codigo, localcode);
+                } sentencia SINO {strcat(codigo, "else //Inicio ELSE\n");}
+                  sentencia {
+                      if(( $3.dimension !=0 )||$3.tipo != booleano){ 
+                          printf("\n(Linea %d) Error semantico : expresión invalida en la sentencia condicional.\n", mylineno); 
+                        }
+                    };
              
 sentencia_mientras : MIENTRAS PAR_IZQ expresion PAR_DER sentencia {if(($3.dimension !=0)||$3.tipo != booleano){ printf("\n(Linea %d) Error semantico : expresión invalida en la sentencia mientras.\n", mylineno); }};
 

@@ -44,9 +44,11 @@ extern int decSubprog;          /* Variable control */
 extern int expArray;
 extern int aux;
 extern dtipo valorCteArray;
-extern int N;
-extern char *codigo;
-extern int mainDeclared;
+extern int N;                   /*Generacion de temporales*/
+extern int etiq;                /*Generacion de etiquetas*/
+extern char *codigo;            /*Codigo general del programa*/
+extern char *etiquetado;        /*Codigo del etiquetado*/            
+extern int mainDeclared;        /*Booleano de declaracion del main*/
 
 extern int mylineno;            /* Número de línea para errores semánticos */
 
@@ -80,5 +82,15 @@ char* temporal();
 void generaCodigoExpBinaria(atributos *L, atributos a1, atributos op, atributos a2);
 void generaCodigoExpUnaria(atributos *L, atributos a1, atributos op);
 void generaDeclaracionVariable(atributos id);
+/*
+*   Funcion para la creacion de etiquetas necesarias para realizar los bucles
+*   y las intracciones if else (?)
+*/
+char* generarEtiquetas();
+/*
+*   Funcion para generar las intrucciones if
+*
+*/
+char* generarIF(int tipo);
 
 #endif
