@@ -1,4 +1,5 @@
 principal{
+
     var 
     entero n, curr;
     finvar
@@ -14,11 +15,12 @@ principal{
 
         d = n / curr;
 
-        si (d*curr == n){
+        si ( curr == n){
             salida "valor: ", curr;
             n = n / curr;
-        }sino{
-            curr = curr + 1;
+            si (n > 1){
+                n = n + curr;
+            }
         }
     }
 

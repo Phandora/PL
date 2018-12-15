@@ -19,6 +19,9 @@ dtipo valorCteArray=desconocido;
 int N = 0;
 char *codigo;
 int mainDeclared = 0;
+int etiq=0; 
+unsigned int TOPE_TD=0;
+DescriptorDeInstrControl TD[MAX_TS];
 
 void insertarVariable(tipoEntrada entrada, char *name, dtipo type){
    
@@ -299,4 +302,29 @@ void generaDeclaracionVariable(atributos id){
     strcat(codigo, res);
 }
 
+char* generarEtiquetas(){
+    char *tmp = (char*) malloc(80*sizeof(char));
+    sprintf(tmp, "etiqueta%d", etiq);
+    ++etiq;
+    return tmp;
+}
+
+void generarIF(atributos a){
+    char *localcode = (char*) malloc(100*sizeof(char));
+    DescriptorDeInstrControl tmp = {.EtiquetaSalida = generarEtiquetas(),
+                                    .EtiquetaElse = generarEtiquetas()};
+    
+    
+    sprintf(localcode, "if(!%s) goto %s;\n", a.vartemp, tmp.EtiquetaElse);
+    strcat(codigo, localcode);
+    TD[TOPE_TD] = tmp;  
+    TOPE_TD ++;         
+}
+
+void generarELSE(){
+    char *localcode = (char*) malloc(100*sizeof(char));
+    DescriptorDeInstrControl aux = TD[TOPE_TD-1];
+    strcat(codigo, aux.EtiquetaElse);
+    strcat(codigo, ": //Etiqueta else\n");    
+}
 

@@ -50,21 +50,21 @@
 
 %%
 
-programa : MAIN {decSubprog = 1;} bloque {decSubprog = 0; /*Aquí hay que realizar la escitura del fichero en lugar de print Añadir } main*/ strcat(codigo, "}\n"); printf("%s", codigo);};
+programa : MAIN {decSubprog = 1;} bloque {decSubprog = 0; /*Aquí hay que realizar la escitura del fichero en lugar de print Añadir } main*/ printf("%s", codigo);};
 
 bloque : INICIO_BLOQUE {insertarMarca();}
          declar_de_variables_locales
          declar_de_subprogs
          {
              if(!mainDeclared){
-                strcat(codigo, "int main(){ // Main\n"); 
+                strcat(codigo, "int main()\n{ //Inicio de bloque\n"); 
                 mainDeclared = 1;
              }else{
                 strcat(codigo, "{  //Inicio de bloque\n"); 
              }
          } 
          sentencias 
-         FIN_BLOQUE {eliminarBloque(); strcat(codigo, "} // FIN BLOQUE\n");}
+         FIN_BLOQUE {eliminarBloque(); strcat(codigo, "} // Fin bloque\n");}
          ;
          
 declar_de_subprogs : declar_de_subprogs declar_subprog
@@ -108,63 +108,76 @@ sentencia : bloque
           | sentencia_hacer_hasta 
           |error;
 
-sentencia_asignacion : identificador ASIGNACION expresion PUN_COMA{
+sentencia_asignacion : identificador ASIGNACION {strcat(codigo, "{ // Inicio traducción asignacion\n");} expresion PUN_COMA{
     if($1.dimension != $4.dimension)
         printf("\n(Linea %d) Error semantico : dimensiones incompatibles en la asignación.\n", mylineno); 
     else
         switch($1.dimension){
             case 0: //Variable 
-                if($1.tipo != $3.tipo)                     
+                if($1.tipo != $4.tipo)                     
                     printf("\n(Linea %d) Error semantico : tipos incompatibles en la asignación.\n", mylineno);
                 else{
                     char *localcode = (char*) malloc(100*sizeof(char));
                     if($4.vartemp == NULL){
-                        if(strcmp($3.lexema, "verdadero") == 0)
-                            sprintf(localcode, "%s = %s;\n", $1.lexema, "1");
-                        else if(strcmp($3.lexema, "falso") == 0)
-                            sprintf(localcode, "%s = %s;\n", $1.lexema, "0");
+                        if(strcmp($4.lexema, "verdadero") == 0)
+                            sprintf(localcode, "%s = %s;\n} // Fin traducción asignacion\n", $1.lexema, "1");
+                        else if(strcmp($4.lexema, "falso") == 0)
+                            sprintf(localcode, "%s = %s;\n} // Fin traducción asignacion\n", $1.lexema, "0");
                         else
-                            sprintf(localcode, "%s = %s;\n", $1.lexema, $4.lexema);
+                            sprintf(localcode, "%s = %s;\n} // Fin traducción asignacion\n", $1.lexema, $4.lexema);
                     } else 
-                        sprintf(localcode, "%s = %s;\n", $1.lexema, $4.vartemp);
+                        sprintf(localcode, "%s = %s;\n} // Fin traducción asignacion\n", $1.lexema, $4.vartemp);
                     
                     strcat(codigo, localcode);
                 }
                 break;
             case 1:
-                if($1.tamadim1 != $3.tamadim1)
+                if($1.tamadim1 != $4.tamadim1)
                     printf("\n(Linea %d) Error semantico : tamaños incompatibles en la asignación.\n", mylineno);	 
-                else if($1.tipo != $3.tipo)
+                else if($1.tipo != $4.tipo)
                         printf("\n(Linea %d) Error semantico : tipos incompatibles en la asignación.\n", mylineno);
                 break;
             case 2:
-                if($1.tamadim1 != $3.tamadim1 || $1.tamadim2 != $3.tamadim2)
+                if($1.tamadim1 != $4.tamadim1 || $1.tamadim2 != $4.tamadim2)
                     printf("\n(Linea %d) Error semantico : tamaños incompatibles en la asignación.\n", mylineno);	 
-                else if($1.tipo != $3.tipo )
+                else if($1.tipo != $4.tipo )
                         printf("\n(Linea %d) Error semantico : tipos incompatibles en la asignación.\n", mylineno);
                 break;
         }
 };	 
+
+
+sentencia_si :  SI PAR_IZQ {strcat(codigo, "{ //Inicio traducción si\n");} expresion PAR_DER { generarIF($4); } sentencia {
+                    if(( $4.dimension !=0 )||$4.tipo != booleano){ 
+                        printf("\n(Linea %d) Error semantico : expresión invalida en la sentencia condicional.\n", mylineno); 
+                    } else{
+                        // ETIQUETA
+                        DescriptorDeInstrControl aux = TD[TOPE_TD-1];
+                        char *aux2 = (char*) malloc(100*sizeof(char));
+                        sprintf(aux2, "goto %s; // Fin if\n", aux.EtiquetaSalida);
+                        strcat(codigo, aux2);
+                    }
+                } else;
+
+                
+else : SINO { generarELSE(); } sentencia {
+        
+                    // ETIQUETA 
                     
-sentencia_si : SI PAR_IZQ expresion  PAR_DER {
-                char *localcode = (char*) malloc(100*sizeof(char));
-                sprintf(localcode, "if(temp%d)//Inicio IF\n",N-1);
-                strcat(codigo, localcode);
-                } sentencia {
-            if(( $3.dimension !=0 )||$3.tipo != booleano){ 
-               printf("\n(Linea %d) Error semantico : expresión invalida en la sentencia condicional.\n", mylineno); 
+                    DescriptorDeInstrControl aux = TD[TOPE_TD-1];
+                    char *aux2 = (char*) malloc(100*sizeof(char));
+                    sprintf(aux2, "} // Fin traducción if\n%s : // Etiqueta salida\n", aux.EtiquetaSalida);
+                    strcat(codigo, aux2);
+                    --TOPE_TD;
             }
-            };
-            | SI PAR_IZQ expresion PAR_DER {
-                char *localcode = (char*) malloc(100*sizeof(char));
-                sprintf(localcode, "if(temp%d) //Inicio IF\n",N-1);
-                strcat(codigo, localcode);
-                } sentencia SINO {strcat(codigo, "else //Inicio ELSE\n");}
-                  sentencia {
-                      if(( $3.dimension !=0 )||$3.tipo != booleano){ 
-                          printf("\n(Linea %d) Error semantico : expresión invalida en la sentencia condicional.\n", mylineno); 
-                        }
-                    };
+      | {   generarELSE();
+            DescriptorDeInstrControl aux = TD[TOPE_TD-1];
+            char *aux2 = (char*) malloc(100*sizeof(char));
+            sprintf(aux2, "} // Fin traducción if\n%s : // Etiqueta salida\n", aux.EtiquetaSalida);
+            strcat(codigo, aux2);
+          --TOPE_TD;};
+
+
              
 sentencia_mientras : MIENTRAS PAR_IZQ expresion PAR_DER sentencia {if(($3.dimension !=0)||$3.tipo != booleano){ printf("\n(Linea %d) Error semantico : expresión invalida en la sentencia mientras.\n", mylineno); }};
 

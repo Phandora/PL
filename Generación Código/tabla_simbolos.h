@@ -10,6 +10,13 @@ typedef enum {
     parametro_formal,   /* si es parametro formal */
 } tipoEntrada ;
 
+typedef struct {
+    char *EtiquetaEntrada ;   /**/
+    char *EtiquetaSalida ;    /**/
+    char *EtiquetaElse ;      /**/
+    char *NombreVarControl ;  /**/
+} DescriptorDeInstrControl ;  
+
 typedef enum {
     entero,
     real,
@@ -32,8 +39,10 @@ typedef struct {
 
 #define MAX_TS 500
 extern unsigned int TOPE;       /* Tope de la pila */
+extern unsigned int TOPE_TD;
 extern unsigned int Subprog ;      /* Indicador de comienzo de bloque de un subprog */
 extern entradaTS TS[MAX_TS] ;      /* Pila de la tabla de símbolos */
+extern DescriptorDeInstrControl TD[MAX_TS];
 extern dtipo tipo_global;          /* Almacena el tipo global */
 extern unsigned int funcion_actual;   /* SON LO MISMO */
 extern int decVar;             /* Varible control */
@@ -91,6 +100,8 @@ char* generarEtiquetas();
 *   Funcion para generar las intrucciones if
 *
 */
-char* generarIF(int tipo);
+void generarIF(atributos a);
+
+void generarELSE();
 
 #endif
