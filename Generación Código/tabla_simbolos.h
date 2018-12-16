@@ -109,5 +109,6 @@ void generarELSE();
 void generaWHILE(atributos a);
 void Etiquetado(char* etiqENTRADA);
 void generaOUT();
+void generaIN();
 
 #endif

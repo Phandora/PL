@@ -395,3 +395,41 @@ void generaOUT(){
     strcat(localcode, ");\n");
     strcat(codigo, localcode);
 }
+
+
+void generaIN(){
+    char *localcode = (char*) malloc(200*sizeof(char));
+    entradaTS *aux = buscarSimbolo(IOExpresions[0].lexema, 0);
+    int index = 0;
+
+    if(aux == NULL){
+        sprintf(localcode, "printf(\%s);\n", IOExpresions[0].lexema);
+        index = 1;
+    }
+    strcat(localcode, "scanf(\"");
+
+    for(int i=index; i<IO_TOPE; ++i){
+        aux = buscarSimbolo(IOExpresions[i].lexema, 0);
+        switch(aux->tipoDato){
+            case entero: strcat(localcode, "\%d");break;
+            case real: strcat(localcode, "\%f");break;
+            case caracter: strcat(localcode, "\%s");break;
+            case booleano: strcat(localcode, "\%d");break;
+        }
+    }
+
+    strcat(localcode, "\", ");
+
+    for(int i=index; i<IO_TOPE-1; ++i){
+        strcat(localcode, "&");
+        strcat(localcode, IOExpresions[i].lexema);
+        strcat(localcode, ", ");
+    }
+
+    strcat(localcode, "&");
+    strcat(localcode, IOExpresions[IO_TOPE-1].lexema);
+    strcat(localcode, ");\n");
+
+    strcat(codigo, localcode);
+}
+

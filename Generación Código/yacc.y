@@ -200,11 +200,11 @@ sentencia_mientras : MIENTRAS PAR_IZQ {
         }
     };
 
-sentencia_entrada : LEER lista_var_cad PUN_COMA ;
+sentencia_entrada : {strcat(codigo, "{ // Inicio traducción de entrada\n");} LEER lista_var_cad PUN_COMA {generaIN(); IO_TOPE=0; strcat(codigo, "} // Fin traducción entrada\n");};
 
-lista_var_cad : lista_var_cad SEPARADOR identificador
-              | CONST_STRING
-              | identificador
+lista_var_cad : lista_var_cad SEPARADOR identificador {IOExpresions[IO_TOPE++] = $3;}
+              | CONST_STRING {IOExpresions[IO_TOPE++] = $1;}
+              | identificador {IOExpresions[IO_TOPE++] = $1;}
               ;
 
 

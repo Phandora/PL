@@ -4,8 +4,7 @@ principal{
         entero curr;
     finvar
 
-    curr = 1;
-    MAX = 50;
+    entrada "Introduce Max y curr: ", MAX, curr;
 
     mientras(curr < MAX){
         salida "Valor curr:", curr, "\n";
