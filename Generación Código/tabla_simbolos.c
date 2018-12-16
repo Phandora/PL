@@ -22,6 +22,9 @@ int mainDeclared = 0;
 int etiq=0; 
 unsigned int TOPE_TD=0;
 DescriptorDeInstrControl TD[MAX_TS];
+atributos IOExpresions[100];  /* Para contar las expresiones de una función printf o scanf*/
+int IO_TOPE = 0;
+
 
 void insertarVariable(tipoEntrada entrada, char *name, dtipo type){
    
@@ -248,6 +251,7 @@ void generaCodigoExpBinaria(atributos *L, atributos a1, atributos op, atributos 
     sprintf(localcode, "%s %s;\n%s = %s %s %s;\n", tipo, tmp, tmp, var1, signo, var2);
     strcat(codigo, localcode);
     L->vartemp = tmp;
+    L->tipoVarTemp = a1.tipo;
 }
 
 
@@ -341,4 +345,53 @@ void Etiquetado(char* etiqENTRADA){
     DescriptorDeInstrControl tmp = {.EtiquetaEntrada = etiqENTRADA};
     TD[TOPE_TD] = tmp;
     TOPE_TD++;
+}
+
+
+void generaOUT(){
+    char *localcode = (char*) malloc(200*sizeof(char));
+    strcat(localcode, "printf(\"");
+
+    for(int i=0; i<IO_TOPE; ++i){
+        entradaTS * aux = buscarSimbolo(IOExpresions[i].lexema, 0);
+        if(aux == NULL){
+            if(IOExpresions[i].vartemp == NULL)
+                strcat(localcode, "\%s ");
+            else{
+                switch(IOExpresions[i].tipoVarTemp){
+                    case entero: strcat(localcode, "\%d "); break;
+                    case caracter: strcat(localcode, "\%s "); break;
+                    case real: strcat(localcode, "\%f "); break;
+                    case booleano: strcat(localcode, "\%d "); break;
+                } 
+            }
+        }
+        else{
+            switch(aux->tipoDato){
+                case entero: strcat(localcode, "\%d "); break;
+                case caracter: strcat(localcode, "\%s "); break;
+                case real: strcat(localcode, "\%f "); break;
+                case booleano: strcat(localcode, "\%d "); break;
+            }
+        }
+    }
+
+    strcat(localcode, "\", ");
+
+    for(int i=0; i<IO_TOPE-1; ++i){
+        if(IOExpresions[i].vartemp == NULL)
+            strcat(localcode, IOExpresions[i].lexema);
+        else
+            strcat(localcode, IOExpresions[i].vartemp);
+
+        strcat(localcode, ", ");
+    }
+
+    if(IOExpresions[IO_TOPE-1].vartemp == NULL)
+        strcat(localcode, IOExpresions[IO_TOPE-1].lexema);
+    else
+        strcat(localcode, IOExpresions[IO_TOPE-1].vartemp);
+    
+    strcat(localcode, ");\n");
+    strcat(codigo, localcode);
 }

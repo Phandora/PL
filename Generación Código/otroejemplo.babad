@@ -1,0 +1,21 @@
+principal{
+    var
+        entero MAX;
+        entero curr;
+    finvar
+
+    curr = 1;
+    MAX = 50;
+
+    mientras(curr < MAX){
+        salida "Valor curr:", curr, "\n";
+        curr = curr + 1;
+
+        si(curr + 2 == MAX)
+            salida "Quedan dos iteraciones\n";
+        sino
+            salida "Aun queda mucho\n";
+    }
+
+    salida "Programa terminado", curr, 50*8;
+}

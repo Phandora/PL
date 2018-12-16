@@ -50,7 +50,12 @@
 
 %%
 
-programa : MAIN {decSubprog = 1;} bloque {decSubprog = 0; /*Aquí hay que realizar la escitura del fichero en lugar de print Añadir } main*/ printf("%s", codigo);};
+programa : MAIN {decSubprog = 1;} bloque {
+        decSubprog = 0; 
+        FILE *f = fopen("codigoIntermedio.c", "w"); 
+        fputs(codigo, f); 
+        fclose(f);
+    };
 
 bloque : INICIO_BLOQUE {insertarMarca(); if(mainDeclared) strcat(codigo, "{  //Inicio de bloque\n");}
          declar_de_variables_locales
@@ -195,7 +200,7 @@ sentencia_mientras : MIENTRAS PAR_IZQ {
         }
     };
 
-sentencia_entrada : LEER lista_var_cad {} PUN_COMA ;
+sentencia_entrada : LEER lista_var_cad PUN_COMA ;
 
 lista_var_cad : lista_var_cad SEPARADOR identificador
               | CONST_STRING
@@ -203,14 +208,14 @@ lista_var_cad : lista_var_cad SEPARADOR identificador
               ;
 
 
-sentencia_salida : OUT lista_exp_cad PUN_COMA ;
+sentencia_salida : {strcat(codigo, "{ // Inicio traducción salida\n");} OUT lista_exp_cad PUN_COMA {generaOUT(); IO_TOPE=0; strcat(codigo, "} // Fin traducción salida\n");};
                  
 lista_exp_cad : lista_exp_cad SEPARADOR exp_cad
               | exp_cad 
               ;
 
-exp_cad : expresion
-        | CONST_STRING ;
+exp_cad : expresion { IOExpresions[IO_TOPE++] = $1;}
+        | CONST_STRING {IOExpresions[IO_TOPE++] = $1;};
   
 sentencia_devolver : DEVOLVER expresion PUN_COMA {if((TS[funcion_actual].dimensiones != 0 )||$2.tipo != TS[funcion_actual].tipoDato){ printf("\n(Linea %d) Error semantico : tipo devuelto incompatible con la función\n", mylineno); }};
 

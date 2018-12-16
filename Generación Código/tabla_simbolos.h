@@ -58,6 +58,7 @@ extern int etiq;                /*Generacion de etiquetas*/
 extern char *codigo;            /*Codigo general del programa*/
 extern char *etiquetado;        /*Codigo del etiquetado*/            
 extern int mainDeclared;        /*Booleano de declaracion del main*/
+extern int IO_TOPE;
 
 extern int mylineno;            /* Número de línea para errores semánticos */
 
@@ -69,7 +70,10 @@ typedef struct {
     int tamadim1;
     int tamadim2;
     char *vartemp;
+    dtipo tipoVarTemp;
 } atributos ;
+
+extern atributos IOExpresions[100];  /* Para contar las expresiones de una función printf o scanf*/
 
 // A partir de ahora, cada símbolo tiene una estructura de tipo atributos
 #define YYSTYPE atributos 
@@ -104,5 +108,6 @@ void generarIF(atributos a);
 void generarELSE();
 void generaWHILE(atributos a);
 void Etiquetado(char* etiqENTRADA);
+void generaOUT();
 
 #endif
